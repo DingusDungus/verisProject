@@ -1,0 +1,16 @@
+<%- include("indexHeader", {title: title}); %>
+<form class="label-left" method="post" action="/index/login">
+    <fieldset>
+        <legend>login to website</legend>
+
+        <label for="Username">Username</label>
+        <input id="Username" type="text" name="username">
+
+        <label for="Password">Password</label>
+        <input id="Password" type="password" name="passwordUser">
+
+        <input type="submit" name="doit" value="Login" id="button1">
+        <a href="/register" id="button1">Sign up</a> 
+    </fieldset>
+</form>
+<%- include("footer"); %>

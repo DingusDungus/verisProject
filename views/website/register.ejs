@@ -1,0 +1,20 @@
+<%- include("header", {title: title}); %>
+<form class="label-left" method="post" action="/index/register">
+    <fieldset>
+        <legend>Register to website</legend>
+
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username">
+
+        <label for="passwordUser">Password</label>
+        <input id="passwordUser" type="password" name="passwordUser">
+
+        <label for="email">Email</label>
+        <input id="email" type="text" name="email">
+
+        <input type="submit" name="doit" value="Register" id="button1">
+        <br>
+        <br>
+    </fieldset>
+</form>
+<%- include("footer"); %>

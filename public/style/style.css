@@ -1,0 +1,147 @@
+body {
+    background-color: grey;
+}
+
+header {
+    background-color: grey;
+}
+
+footer {
+    background-color: grey;
+}
+
+.container {
+    margin: 15px auto;
+    padding: 8px;
+    background: #fff;
+    width: 700px;
+}
+
+#header {
+    font-family: monospace;
+}   
+
+fieldset {
+    font-size: 1em;
+    padding: 0.5em;
+    border-radius: 1em;
+    font-family: sans-serif;
+}
+
+label, input, button {
+    font-size: inherit;
+    padding: 0.2em;
+    margin: 0.1em 0.2em;
+    /* the following ensures they're all using the same box-model for rendering */
+    -moz-box-sizing: content-box; /* or `border-box` */
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+table {
+    border: 1px solid #ccc;
+}
+
+th {
+    border-bottom: 1px solid #999;
+}
+
+td {
+    padding: 0.2em;
+}
+
+td.right {
+    text-align: right;
+}
+
+tr:hover {
+    background-color: #eee;
+}
+
+form.label-left {
+    margin-bottom: 24px;
+}
+
+form.label-left label,
+form.label-left input[type=text],
+form.label-left input[type=password],
+form.label-left input[type=number] {
+    height: 20px;
+    margin-bottom: 4px;
+}
+
+form.label-left label {
+    display: inline-block;
+    width: 5em;
+    float: left;
+    padding-top: 6px;
+    padding-right: 1em;
+
+    /* text-align: right; */
+}
+
+form.label-left label::after {
+    content: ":";
+}
+
+form.label-left input[type=text],
+form.label-left input[type=password],
+form.label-left input[type=number] {
+    display: block;
+    width: 20em;
+    height: 25px;
+}
+
+input[type=text] {
+    border: 2px solid black;
+    border-radius: 4px;
+    background-color: #d1d1d1e1;
+    background-image: url('searchicon.png');
+}
+
+input[type=password] {
+    border: 2px solid black;
+    border-radius: 4px;
+    background-color: #d1d1d1e1;
+}
+
+#button1 {
+    background-color: grey;
+    border: none;
+    color: white;
+    padding: 7px 8px;
+    text-decoration: none;
+    margin: 2px 3px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    border: 1px solid black;
+    font-family: monaco;
+    text-align: center;
+}
+
+#button1:hover {
+  background-color: #4CAF50; /* Green */
+  color: white;
+}
+
+#navBar {
+    background-color: grey;
+    border: none;
+    color: white;
+    padding: 7px 8px;
+    text-decoration: none;
+    margin: 2px 3px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    border: 1px solid black;
+    font-family: monaco;
+    text-align: center;
+    width: 25%;
+}
+
+#navBar:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
