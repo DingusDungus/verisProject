@@ -25,7 +25,7 @@ router.get("/register", (req, res) => {
     res.render("website/register", data);
 });
 
-router.get("/user/:username", async (req, res) => {
+router.get("/student/:username", async (req, res) => {
     if (req.session.name == req.params.username) {
         let data = {
             title: "User view | The Website"
@@ -52,7 +52,7 @@ router.post("/index/login", urlencodedParser, async (req, res) => {
     let result = await website.login(req.body.username, req.body.passwordUser);
     if (result.length > 0) {
         req.session.name = req.body.username;
-        res.redirect(`/user/${req.body.username}`);
+        res.redirect(`/student/${req.body.username}`);
     }
     else {
         res.redirect("/index");
@@ -69,7 +69,7 @@ router.post("/index/register", urlencodedParser, async (req, res) => {
 
         req.session.name = req.body.username;
 
-        res.redirect(`/user/${req.body.username}`);
+        res.redirect(`/student/${req.body.username}`);
     }
     else
     {

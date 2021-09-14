@@ -13,7 +13,7 @@ let db;
 
 let website = {
     login: async function (username, password) {
-        let sql = `CALL login_check(?, ?);`;
+        let sql = `CALL login_check_students(?, ?);`;
         let res;
 
         res = await db.query(sql, [username, password]);
@@ -23,10 +23,10 @@ let website = {
     register: async function (username, password, email) {
         let success = false;
         let res;
-        let sql = `CALL registerCheck(?);`;
+        let sql = `CALL registerCheck_students(?);`;
         res = await db.query(sql, [username]);
         if (res[0].length == 0) {
-            sql = `CALL register(?, ?, ?);`;
+            sql = `CALL register_students(?, ?, ?);`;
 
 
             await db.query(sql, [username, password, email]);
@@ -35,7 +35,7 @@ let website = {
         return success;
     },
     getID: async function (username, password) {
-        let sql = 'CALL getID(?, ?);';
+        let sql = 'CALL getID_students(?, ?);';
         let res;
 
         res = await db.query(sql, [username, password]);
