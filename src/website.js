@@ -40,6 +40,11 @@ let website = {
 
         res = await db.query(sql, [username, password]);
         return res[0];
+    },
+    adminRegister: async function (username, email, password) {
+        let sql = 'CALL register_admins(?, ?, ?);';
+
+        await db.query(sql, [username, password, email]);
     }
 };
 

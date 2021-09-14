@@ -17,6 +17,22 @@ router.get("/index", (req, res) => {
     res.render("website/index", data);
 });
 
+router.get("/login/students", (req, res) => {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+    res.render("website/login-students", data);
+});
+
+router.get("/login/admins", (req, res) => {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+    res.render("website/login-admins", data);
+});
+
 router.get("/register", (req, res) => {
     let data = {
         title: "Register | The Website"
@@ -55,7 +71,7 @@ router.post("/index/login", urlencodedParser, async (req, res) => {
         res.redirect(`/student/${req.body.username}`);
     }
     else {
-        res.redirect("/index");
+        res.redirect("/login/students");
     }
 });
 

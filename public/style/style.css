@@ -17,8 +17,16 @@ footer {
     width: 700px;
 }
 
+.container1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30%;
+}
+
 #header {
     font-family: monospace;
+    
 }   
 
 fieldset {
@@ -139,9 +147,31 @@ input[type=password] {
     font-family: monaco;
     text-align: center;
     width: 25%;
+    display: inline;
 }
 
 #navBar:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
+
+#indexButtons {
+    width: 180px;
+    height: 100px;
+    background-color: white;
+    border: none;
+    color: black;
+    padding: 7px 8px;
+    text-decoration: none;
+    margin: 2px 3px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    border: 1px solid black;
+    font-family: monaco;
+    text-align: center;
+}
+#indexButtons:hover {
     background-color: #4CAF50; /* Green */
     color: white;
   }

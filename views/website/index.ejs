@@ -1,16 +1,12 @@
-<%- include("indexHeader", {title: title}); %>
-<form class="label-left" method="post" action="/index/login">
-    <fieldset>
-        <legend>login to website</legend>
-
-        <label for="Username">Username</label>
-        <input id="Username" type="text" name="username">
-
-        <label for="Password">Password</label>
-        <input id="Password" type="password" name="passwordUser">
-
-        <input type="submit" name="doit" value="Login" id="button1">
-        <a href="/register" id="button1">Sign up</a> 
-    </fieldset>
-</form>
-<%- include("footer"); %>
+<!doctype html>
+<meta charset="utf-8">
+<title><%= title %></title>
+<link rel="stylesheet" href="/style/style.css">
+<link rel="icon" href="/favicon.ico">
+<div>
+    <main class="container1">
+    <h1 id="header">Veris</h1><br>
+    <a href="/login/students" id="indexButtons"><h1>Student</h1></a>
+    <br> 
+    <a href="/login/admins" id="indexButtons"><h1>Admin</h1></a> </div>
+</main>
