@@ -1,5 +1,5 @@
 body {
-    background-color: grey;
+    background-image: url("background-image.jpg");
 }
 
 header {
@@ -21,12 +21,21 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 30%;
+    margin-top: 7%;
 }
 
 #header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20%;
+    margin-left: 35%;
     font-family: monospace;
-    
+    font-size: 100px;
+    background-color: #4CAF50;
+    border: 1px solid black;
+    color: white;
+    width: 30%;
 }   
 
 fieldset {
@@ -168,8 +177,10 @@ input[type=password] {
     transition-duration: 0.4s;
     transition-duration: 0.4s;
     border: 1px solid black;
-    font-family: monaco;
     text-align: center;
+    font-family: monospace;
+    vertical-align: middle;
+    font-size: 20px;
 }
 #indexButtons:hover {
     background-color: #4CAF50; /* Green */
