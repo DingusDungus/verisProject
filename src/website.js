@@ -45,6 +45,17 @@ let website = {
         let sql = 'CALL register_admins(?, ?, ?);';
 
         await db.query(sql, [username, password, email]);
+    },
+    adminLogin: async function (username, password) {
+        let sql = `CALL login_check_admins(?, ?);`;
+        let res;
+
+        res = await db.query(sql, [username, password]);
+        return res[0];
+    },
+    addEquipment: async function(name, description) {
+        let sql = `CALL equipment_add(?, ?);`;
+        await db.query(sql, [name, description]);
     }
 };
 

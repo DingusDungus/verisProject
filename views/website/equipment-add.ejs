@@ -1,0 +1,15 @@
+<%- include("admin-header", {title: title}); %>
+<form class="label-left" method="post" action="/add-equipment">
+    <fieldset>
+        <legend>Add equipment</legend>
+
+        <label for="name">Name</label>
+        <input id="name" type="text" name="name">
+
+        <label for="description">Description</label>
+        <input id="description" type="text" name="description">
+
+        <input type="submit" name="doit" value="submit" id="button1">
+    </fieldset>
+</form>
+<%- include("footer"); %>

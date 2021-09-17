@@ -30,7 +30,7 @@ CREATE TABLE equipment (
     id INT AUTO_INCREMENT NOT NULL,
     e_name VARCHAR(20) NOT NULL,
     e_description VARCHAR(200),
-    e_status VARCHAR(10),
+    e_status VARCHAR(10) DEFAULT "Free",
     deleted TIMESTAMP DEFAULT 0,
     PRIMARY KEY (id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
@@ -142,11 +142,16 @@ DROP PROCEDURE IF EXISTS register_students;
 
 DROP PROCEDURE IF EXISTS login_check_students;
 
+DROP PROCEDURE IF EXISTS login_check_admins;
+
 DROP PROCEDURE IF EXISTS registerCheck_students;
 
 DROP PROCEDURE IF EXISTS get_ID_students;
 
 DROP PROCEDURE IF EXISTS register_admins;
+
+DROP PROCEDURE IF EXISTs equipment_add;
+
 
 DELIMITER ;;
 
@@ -229,6 +234,41 @@ FROM
 WHERE
     username = p_username
     AND passwordUser = p_passwordUser;
+
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE login_check_admins(
+    p_username VARCHAR(30),
+    p_passwordUser VARCHAR(30)
+) BEGIN
+SELECT
+    *
+FROM
+    admins
+WHERE
+    username = p_username
+    AND passwordUser = p_passwordUser;
+
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_add(
+    p_name VARCHAR(30),
+    p_description VARCHAR(200)
+    ) BEGIN
+INSERT INTO
+    equipment (e_name, e_description)
+VALUES
+    (p_name, p_description);
 
 END
 ;;

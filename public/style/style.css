@@ -2,14 +2,6 @@ body {
     background-image: url("background-image.jpg");
 }
 
-header {
-    background-color: grey;
-}
-
-footer {
-    background-color: grey;
-}
-
 .container {
     margin: 15px auto;
     padding: 8px;
@@ -148,14 +140,14 @@ input[type=password] {
     color: white;
     padding: 7px 8px;
     text-decoration: none;
-    margin: 2px 3px;
     cursor: pointer;
     transition-duration: 0.4s;
     transition-duration: 0.4s;
     border: 1px solid black;
-    font-family: monaco;
+    font-family: monospace;
     text-align: center;
-    width: 25%;
+    width: 50%;
+    height: 50px;
     display: inline;
 }
 
