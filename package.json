@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf node_modules package-lock.json"
+    "test1": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf node_modules package-lock.json",
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +17,8 @@
     "express": "^4.17.1",
     "mysql": "^2.15.0",
     "promise-mysql": "^3.3.2"
+  },
+  "devDependencies": {
+    "mocha": "^9.1.1"
   }
 }
