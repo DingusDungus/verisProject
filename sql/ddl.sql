@@ -150,7 +150,13 @@ DROP PROCEDURE IF EXISTS get_ID_students;
 
 DROP PROCEDURE IF EXISTS register_admins;
 
-DROP PROCEDURE IF EXISTs equipment_add;
+DROP PROCEDURE IF EXISTS equipment_add_test;
+
+DROP PROCEDURE IF EXISTS equipment_add;
+
+DROP PROCEDURE IF EXISTS equipment_remove;
+
+DROP PROCEDURE IF EXISTS equipment_show;
 
 
 DELIMITER ;;
@@ -274,3 +280,51 @@ END
 ;;
 
 DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_add_test() BEGIN
+SELECT
+    *
+FROM
+    equipment
+WHERE
+    e_name = "Scalpel" 
+    AND 
+    e_description = "Sharp blade made for cutting things";
+
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_remove(
+    p_id INT
+) BEGIN
+
+UPDATE equipment
+    SET deleted = NOW()
+    WHERE id = p_id;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_show() BEGIN
+SELECT
+    *
+FROM
+    equipment
+WHERE
+    deleted = 0
+    ;
+
+END
+;;
+
+DELIMITER ;
+

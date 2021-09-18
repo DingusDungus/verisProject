@@ -56,6 +56,18 @@ let website = {
     addEquipment: async function(name, description) {
         let sql = `CALL equipment_add(?, ?);`;
         await db.query(sql, [name, description]);
+    },
+    addEquipmentTest: async function()
+    {
+        let sql = `CALL equipment_add_test();`;
+        let result =  await db.query(sql);
+        return result[0];
+    },
+    showEquipment: async function()
+    {
+        let sql = `CALL equipment_show();`;
+        let result = await db.query(sql);
+        return result[0];
     }
 };
 

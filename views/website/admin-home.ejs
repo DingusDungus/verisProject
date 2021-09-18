@@ -1,3 +1,18 @@
 <%- include("admin-header", {title: title}); %>
 <h1>HELLO USER!</h1>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <% for(var i = 0; i < results.length; i++) { %>
+        <tr>
+      <td><%= results[i].id %></td>
+      <td><%= results[i].e_name %></td>
+      <td><%= results[i].e_description %></td>
+    </tr>
+    <% } %>
+</table>
+
 <%- include("footer"); %>

@@ -63,8 +63,10 @@ router.get("/student/:username", async (req, res) => {
 router.get("/admins/:username", async (req, res) => {
     if (req.session.name == req.params.username) {
         let data = {
-            title: "User view | The Website"
+            title: "User view | The Website",
+            results: []
         };
+        data.results = await website.showEquipment();
 
         res.render("website/admin-home", data);
     }
@@ -145,7 +147,7 @@ router.post("/add-equipment", urlencodedParser, async (req, res) => {
     let data = {
         title: "Home | Veris"
     }
-    res.render("website/admin-home", data);
+    res.redirect(`/admins/${req.session.name}`, data);
 });
 
 module.exports = router;
