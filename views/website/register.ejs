@@ -15,6 +15,9 @@
         <input type="submit" name="doit" value="Register" id="button1">
         <br>
         <br>
+        <% if (failed == true) { %>
+            <p style= "color: red;">Username already exists!</p>
+        <% } %>
     </fieldset>
 </form>
 <%- include("footer"); %>

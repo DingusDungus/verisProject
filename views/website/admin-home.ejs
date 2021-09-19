@@ -1,18 +1,32 @@
-<%- include("admin-header", {title: title}); %>
-<h1>HELLO USER!</h1>
+<%- include("admin-header", {title: title, name: name}); %>
+<h1>Overview</h1><br>
+<form method="post" action="/admin-features/overview-search">
+  <fieldset>
+      <label for="name">Search</label>
+      <input id="search" type="text" name="search"> <input type="submit" name="doit" value="submit" id="button1"><a href="<%= `/admins/${name}` %>" id="button1">reset</a>
+  </fieldset>
+</form>
+<div style="overflow-x:auto;">
 <table>
     <tr>
         <th>Id</th>
         <th>Name</th>
         <th>Description</th>
+        <th>Status</th>'
+        <th>Action</th>
     </tr>
     <% for(var i = 0; i < results.length; i++) { %>
         <tr>
       <td><%= results[i].id %></td>
       <td><%= results[i].e_name %></td>
       <td><%= results[i].e_description %></td>
+      <td><%= results[i].e_status %></td>
+      <td>
+        <a href="/admin-features/modify/<%= results[i].id %>">&#x270e;</a>
+        <a href="/admin-features/remove/<%= results[i].id %>">&#x1F5D1;</a>
+      </td>
     </tr>
     <% } %>
 </table>
-
+</div>
 <%- include("footer"); %>

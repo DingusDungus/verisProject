@@ -16,6 +16,12 @@ body {
     margin-top: 7%;
 }
 
+.divScroll {
+    overflow:scroll;
+    height:300px;
+    width: 700px;
+}
+
 #header {
     display: flex;
     justify-content: center;
@@ -126,7 +132,11 @@ input[type=password] {
     transition-duration: 0.4s;
     border: 1px solid black;
     font-family: monaco;
-    text-align: center;
+    width:50px;
+    height:20px;
+    text-align:center;
+    line-height:1.1em;
+    font-size:1.1em;
 }
 
 #button1:hover {
@@ -177,4 +187,4 @@ input[type=password] {
 #indexButtons:hover {
     background-color: #4CAF50; /* Green */
     color: white;
-  }
+}

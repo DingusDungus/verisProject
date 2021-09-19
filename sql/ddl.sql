@@ -120,16 +120,12 @@ DELIMITER ;;
 CREATE TRIGGER equipment_picked_up
 AFTER
 UPDATE
-    ON equipment FOR EACH ROW BEGIN
+    ON equipment_student FOR EACH ROW BEGIN
 INSERT INTO
-    logs (s_id, e_id, description)
+    logs (s_id, e_id)
 VALUES
     (
-        NEW.id,
-        CONCAT(
-            "Equipment status changed, Status: ",
-            NEW.e_status
-        )
+        NEW.s_id, NEW.e_id
     );
 
 END
@@ -157,6 +153,12 @@ DROP PROCEDURE IF EXISTS equipment_add;
 DROP PROCEDURE IF EXISTS equipment_remove;
 
 DROP PROCEDURE IF EXISTS equipment_show;
+
+DROP PROCEDURE IF EXISTS equipment_modify;
+
+DROP PROCEDURE IF EXISTS equipment_search;
+
+DROP PROCEDURE IF EXISTS equipment_info_get;
 
 
 DELIMITER ;;
@@ -304,8 +306,8 @@ CREATE PROCEDURE equipment_remove(
     p_id INT
 ) BEGIN
 
-UPDATE equipment
-    SET deleted = NOW()
+UPDATE equipment SET 
+        deleted = NOW()
     WHERE id = p_id;
 END
 ;;
@@ -328,3 +330,53 @@ END
 
 DELIMITER ;
 
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_modify(
+    p_id INT,
+    p_name VARCHAR(20),
+    p_description VARCHAR(200)
+) BEGIN
+
+UPDATE equipment SET 
+        e_name = p_name, e_description = p_description
+    WHERE id = p_id;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_search(
+    search VARCHAR(200)
+) BEGIN
+SELECT
+    *
+FROM
+    equipment
+WHERE
+    e_name LIKE CONCAT("%", search, "%") OR id LIKE CONCAT("%", search, "%") OR e_description LIKE CONCAT("%", search, "%")
+    ;
+
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_info_get(
+    p_id INT
+) BEGIN
+SELECT
+    *
+FROM
+    equipment
+WHERE
+    id = p_id;
+
+END
+;;
+
+DELIMITER ;

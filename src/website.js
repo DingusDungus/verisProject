@@ -68,6 +68,32 @@ let website = {
         let sql = `CALL equipment_show();`;
         let result = await db.query(sql);
         return result[0];
+    },
+    removeEquipment: async function(id)
+    {
+        let sql = `CALL equipment_remove(?);`;
+        await db.query(sql, [id]);
+    },
+    searchEquipment: async function(search)
+    {
+        let sql = `CALL equipment_search(?);`;
+        let result = await db.query(sql, [search]);
+
+        return result[0];
+    },
+    modifyEquipment: async function(id, name, description)
+    {
+        let sql = `CALL equipment_modify(?, ?, ?);`;
+        let result = await db.query(sql, [id, name, description]);
+
+        return result[0];
+    },
+    getEquipmentInfo: async function(id)
+    {
+        let sql = `CALL equipment_info_get(?);`;
+        let result = await db.query(sql, [id]);
+
+        return result[0];
     }
 };
 
