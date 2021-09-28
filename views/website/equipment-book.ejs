@@ -1,9 +1,9 @@
 <%- include("admin-header", {title: title, name: name}); %>
 <h1>Overview</h1><br>
-<form method="post" action="/admin-features/overview-search">
+<form method="post" action="/student-features/overview-search">
   <fieldset>
       <label for="name">Search</label>
-      <input id="search" type="text" name="search"> <input type="submit" name="doit" value="submit" id="button1"><a href="<%= `/students/${name}` %>" id="button1">reset</a>
+      <input id="search" type="text" name="search"> <input type="submit" name="doit" value="submit" id="button1"><a href="<%= `/admins/${name}` %>" id="button1">reset</a>
   </fieldset>
 </form>
 <div style="overflow-x:auto;">
@@ -26,8 +26,7 @@
       <td><%= results[i].quantity %></td>
       <td><%= results[i].available %></td>
       <td>
-        <a href="/admin-features/modify/<%= results[i].id %>">&#x270e;</a>
-        <a href="/admin-features/remove/<%= results[i].id %>">&#x1F5D1;</a>
+        <a href="/student-features/book/<%= results[i].id %>">&#x270e;</a>
       </td>
     </tr>
     <% } %>

@@ -53,9 +53,9 @@ let website = {
         res = await db.query(sql, [username, password]);
         return res[0];
     },
-    addEquipment: async function(name, description) {
-        let sql = `CALL equipment_add(?, ?);`;
-        await db.query(sql, [name, description]);
+    addEquipment: async function(name, description, quantity) {
+        let sql = `CALL equipment_add(?, ?, ?);`;
+        await db.query(sql, [name, description, quantity]);
     },
     addEquipmentTest: async function()
     {
@@ -81,10 +81,10 @@ let website = {
 
         return result[0];
     },
-    modifyEquipment: async function(id, name, description)
+    modifyEquipment: async function(id, name, description, quantity)
     {
-        let sql = `CALL equipment_modify(?, ?, ?);`;
-        let result = await db.query(sql, [id, name, description]);
+        let sql = `CALL equipment_modify(?, ?, ?, ?);`;
+        let result = await db.query(sql, [id, name, description, quantity]);
 
         return result[0];
     },

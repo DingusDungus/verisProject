@@ -43,13 +43,13 @@ router.get("/register", (req, res) => {
     res.render("website/register", data);
 });
 
-router.get("/student/:username", async (req, res) => {
+router.get("/students/:username", async (req, res) => {
     if (req.session.name == req.params.username) {
         let data = {
             title: "User view | The Website"
         };
 
-        res.render("website/user", data);
+        res.render("website/student-home", data);
     }
     else {
         let data = {
@@ -111,6 +111,17 @@ router.get("/admin-features/modify/:id", async (req, res) => {
     res.render(`website/equipment-modify.ejs`, data);
 });
 
+router.get("/student-features/book", async (req, res) => {
+        let data = {
+            title: "Book | Veris",
+            results: [],
+            name: req.session.name
+        };
+        data.results = await website.showEquipment();
+
+        res.render("website/equipment-book.ejs", data)
+});
+
 router.post("/index/login-students", urlencodedParser, async (req, res) => {
     let result = await website.login(req.body.username, req.body.passwordUser);
     if (result.length > 0) {
@@ -166,7 +177,7 @@ router.post("/index/register", urlencodedParser, async (req, res) => {
 });
 
 router.post("/add-equipment", urlencodedParser, async (req, res) => {
-    await website.addEquipment(req.body.name, req.body.description);
+    await website.addEquipment(req.body.name, req.body.description, req.body.quantity);
 
     res.redirect(`/admins/${req.session.name}`);
 });

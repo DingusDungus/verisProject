@@ -7,6 +7,7 @@ body {
     padding: 8px;
     background: #fff;
     width: 700px;
+    border-radius: 15px;
 }
 
 .container1 {
@@ -140,7 +141,7 @@ input[type=password] {
 }
 
 #button1:hover {
-  background-color: #4CAF50; /* Green */
+  background-color: #43acdd; /* Green */
   color: white;
 }
 
@@ -162,7 +163,7 @@ input[type=password] {
 }
 
 #navBar:hover {
-    background-color: #4CAF50; /* Green */
+    background-color: #43acdd; /* Green */
     color: white;
   }
 
@@ -183,8 +184,16 @@ input[type=password] {
     font-family: monospace;
     vertical-align: middle;
     font-size: 20px;
+    border-radius: 15px;
+    margin-top: 5%;
 }
 #indexButtons:hover {
-    background-color: #4CAF50; /* Green */
+    background-color: #43acdd; /* Green */
     color: white;
 }
+
+#indexImage {
+    margin-left: 40%;
+    margin-top: 15%;
+}
+

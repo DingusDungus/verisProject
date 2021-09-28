@@ -21,7 +21,7 @@ CREATE TABLE students (
 CREATE TABLE admins (
     id INT AUTO_INCREMENT NOT NULL,
     username VARCHAR(30),
-    passwordUser VARCHAR(30),
+    passwordUser VARCHAR(64),
     email VARCHAR(50),
     PRIMARY KEY(id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
@@ -32,6 +32,8 @@ CREATE TABLE equipment (
     e_description VARCHAR(200),
     e_status VARCHAR(10) DEFAULT "Free",
     deleted TIMESTAMP DEFAULT 0,
+    quantity INT DEFAULT 1,
+    available INT DEFAULT quantity,
     PRIMARY KEY (id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
@@ -39,6 +41,7 @@ CREATE TABLE equipment_student (
     e_id INT NOT NULL,
     s_id INT NOT NULL,
     booked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    quantity INT,
     picked_up TIMESTAMP DEFAULT 0,
     returned TIMESTAMP DEFAULT 0,
     PRIMARY KEY (e_id, s_id),
@@ -160,18 +163,22 @@ DROP PROCEDURE IF EXISTS equipment_search;
 
 DROP PROCEDURE IF EXISTS equipment_info_get;
 
+DROP PROCEDURE IF EXISTS show_booked;
+
+DROP PROCEDURE IF EXISTS equipment_book;
+
 
 DELIMITER ;;
 
 CREATE PROCEDURE register_admins(
     p_username VARCHAR(30),
-    p_passwordUser VARCHAR(30),
+    p_passwordUser VARCHAR(32),
     p_email VARCHAR(50)
 ) BEGIN
 INSERT INTO
     admins (username, passwordUser, email)
 VALUES
-    (p_username, p_passwordUser, p_email);
+    (p_username, SHA2(p_passwordUser, "256"), p_email);
 
 END
 ;;
@@ -232,16 +239,15 @@ DELIMITER ;
 DELIMITER ;;
 
 CREATE PROCEDURE get_ID_students(
-    p_username VARCHAR(30),
-    p_passwordUser VARCHAR(30)
-) BEGIN
+    p_username VARCHAR(30)
+    ) BEGIN
 SELECT
     id
 FROM
     users
 WHERE
     username = p_username
-    AND passwordUser = p_passwordUser;
+    ;
 
 END
 ;;
@@ -252,7 +258,7 @@ DELIMITER ;;
 
 CREATE PROCEDURE login_check_admins(
     p_username VARCHAR(30),
-    p_passwordUser VARCHAR(30)
+    p_passwordUser VARCHAR(32)
 ) BEGIN
 SELECT
     *
@@ -260,7 +266,7 @@ FROM
     admins
 WHERE
     username = p_username
-    AND passwordUser = p_passwordUser;
+    AND passwordUser = SHA2(p_passwordUser, "256");
 
 END
 ;;
@@ -271,12 +277,13 @@ DELIMITER ;;
 
 CREATE PROCEDURE equipment_add(
     p_name VARCHAR(30),
-    p_description VARCHAR(200)
+    p_description VARCHAR(200),
+    p_quantity INT
     ) BEGIN
 INSERT INTO
-    equipment (e_name, e_description)
+    equipment (e_name, e_description, quantity)
 VALUES
-    (p_name, p_description);
+    (p_name, p_description, p_quantity);
 
 END
 ;;
@@ -335,11 +342,12 @@ DELIMITER ;;
 CREATE PROCEDURE equipment_modify(
     p_id INT,
     p_name VARCHAR(20),
-    p_description VARCHAR(200)
+    p_description VARCHAR(200),
+    p_quantity INT
 ) BEGIN
 
 UPDATE equipment SET 
-        e_name = p_name, e_description = p_description
+        e_name = p_name, e_description = p_description, quantity = p_quantity
     WHERE id = p_id;
 END
 ;;
@@ -356,7 +364,7 @@ SELECT
 FROM
     equipment
 WHERE
-    e_name LIKE CONCAT("%", search, "%") OR id LIKE CONCAT("%", search, "%") OR e_description LIKE CONCAT("%", search, "%")
+    (e_name LIKE CONCAT("%", search, "%") OR id LIKE CONCAT("%", search, "%") OR e_description LIKE CONCAT("%", search, "%")) AND deleted = 0
     ;
 
 END
@@ -374,9 +382,40 @@ SELECT
 FROM
     equipment
 WHERE
-    id = p_id;
-
+    id = p_id AND deleted = 0;
 END
 ;;
 
 DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_booked(
+    ps_id INT
+) BEGIN
+SELECT
+    *
+FROM
+    equipment_student
+WHERE
+ s_id = p_id;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE equipment_book(
+    ps_id INT
+) BEGIN
+INSERT INTO
+    equipment_student(s_id, e_id, quantity)
+VALUES
+    (ps_id, pe_id, p_quantity);
+END
+;;
+
+DELIMITER ;
+
+
