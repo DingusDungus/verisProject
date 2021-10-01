@@ -1,5 +1,5 @@
 <%- include("admin-header", {title: title, name: name}); %>
-<h1>Overview</h1><br>
+<h1>Book equipment</h1><br>
 <form method="post" action="/student-features/overview-search">
   <fieldset>
       <label for="name">Search</label>
@@ -26,7 +26,7 @@
       <td><%= results[i].quantity %></td>
       <td><%= results[i].available %></td>
       <td>
-        <a href="/student-features/book/<%= results[i].id %>">&#x270e;</a>
+        <a href="/student-features/book/<%= results[i].id %>">Book</a>
       </td>
     </tr>
     <% } %>
