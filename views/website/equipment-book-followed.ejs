@@ -37,20 +37,24 @@
           
         <div class='input-group date' id='datetimepicker1'>
             <div class="input-group-addon">
-                <input type="text" class="form-control">
+                <input type="text" class="form-control" name="date">
             </div>
         </div>
-        
 
         <input type="submit" name="doit" value="submit" id="button1">
     </div>
-
 </form>
 </section>
 </main>
 <script type="text/javascript">
+let dates = <%- JSON.stringify(disabledDate) %>
+    console.log(<%= disabledDate %>);
+    
     $(function() {
-        $('#datetimepicker1').datetimepicker();
+        $('#datetimepicker1').datetimepicker({
+            disabledDates: dates
+        });
+        
     });
 </script>
 </body>

@@ -94,6 +94,17 @@ let website = {
         let result = await db.query(sql, [id]);
 
         return result[0];
+    },
+    showBookedDates: async function()
+    {
+        let sql = `CALL show_booked_dates();`;
+        let result = await db.query(sql);
+
+        return result[0];
+    },
+    bookEquipment: async function(e_id, s_id, item_id,quantity, date)
+    {
+
     }
 };
 

@@ -167,6 +167,8 @@ DROP PROCEDURE IF EXISTS show_booked;
 
 DROP PROCEDURE IF EXISTS equipment_book;
 
+DROP PROCEDURE IF EXISTS show_booked_dates;
+
 
 DELIMITER ;;
 
@@ -407,7 +409,9 @@ DELIMITER ;
 DELIMITER ;;
 
 CREATE PROCEDURE equipment_book(
-    ps_id INT
+    ps_id INT,
+    pe_id INT,
+    p_quantity INT
 ) BEGIN
 INSERT INTO
     equipment_student(s_id, e_id, quantity)
@@ -418,4 +422,14 @@ END
 
 DELIMITER ;
 
+DELIMITER ;;
 
+CREATE PROCEDURE show_booked_dates() 
+BEGIN
+    SELECT booked FROM equipment_student
+        WHERE booked != 0 and picked_up = 0
+        ;
+END
+;;
+
+DELIMITER ;

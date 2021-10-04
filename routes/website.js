@@ -127,11 +127,21 @@ router.get("/student-features/book/:id", async (req, res) => {
     let data = {
         title: "Book | Veris",
         results: [],
-        name: req.session.name
+        name: req.session.name,
+        disabledDate: []
     };
     data.results = await website.getEquipmentInfo(req.params.id);
-
     data.results = data.results[0];
+    let disabledDates = await website.showBookedDates();
+    
+    for (let i = 0;i < disabledDates.length;i++)
+    {
+        data.disabledDate.push(disabledDates[i].booked.toLocaleDateString('fr-CA'));
+    }
+    data.disabledDate.push('2021-10-10');
+
+    console.log(data.disabledDate);
+
 
     res.render("website/equipment-book-followed.ejs", data)
 });
@@ -177,7 +187,7 @@ router.post("/index/register", urlencodedParser, async (req, res) => {
 
         req.session.name = req.body.username;
 
-        res.redirect(`/student/${req.body.username}`);
+        res.redirect(`/students/${req.body.username}`);
     }
     else
     {
@@ -205,6 +215,7 @@ router.post("/modify-equipment", urlencodedParser, async (req, res) => {
 router.post("/student-booked", urlencodedParser, async (req, res) => {
     console.log(req.body.quantity);
     console.log(req.body.date);
+
 });
 
 module.exports = router;
