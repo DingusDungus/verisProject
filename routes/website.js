@@ -47,8 +47,11 @@ router.get("/students/:username", async (req, res) => {
     if (req.session.name == req.params.username) {
         let data = {
             title: "User view | The Website",
-            name: req.session.name
+            name: req.session.name,
+            result1: []
         };
+
+        data.result1 = await website.showPickupReady(req.session.id);
 
         res.render("website/student-home", data);
     }
@@ -146,10 +149,27 @@ router.get("/student-features/book/:id", async (req, res) => {
     res.render("website/equipment-book-followed.ejs", data)
 });
 
+router.get("/student-features/pick-up/:es_id", async (req, res) => {
+    let data = {
+        title: "Book | Veris",
+        results: [],
+        name: req.session.name
+    };
+
+    await website.pick_up(req.params.es_id);
+
+    res.redirect(`/students/${req.session.name}`);
+});
+
 router.post("/index/login-students", urlencodedParser, async (req, res) => {
     let result = await website.login(req.body.username, req.body.passwordUser);
+    let accInfo = await website.getAccountInfo(req.body.username);
+    console.log(accInfo);
+
     if (result.length > 0) {
         req.session.name = req.body.username;
+        req.session.id = accInfo[0].id;
+
         res.redirect(`/students/${req.body.username}`);
     }
     else {
@@ -170,6 +190,7 @@ router.post("/admin-features/overview-search", urlencodedParser, async (req, res
 
 router.post("/index/login-admins", urlencodedParser, async (req, res) => {
     let result = await website.adminLogin(req.body.username, req.body.passwordUser);
+    
 
     if (result.length > 0) {
         req.session.name = req.body.username;
@@ -184,8 +205,9 @@ router.post("/index/register", urlencodedParser, async (req, res) => {
     let registerSucces = await website.register(req.body.username, req.body.passwordUser, req.body.email);
 
     if (registerSucces == true) {
-
+        let accInfo = await website.getAccountInfo(req.body.username);
         req.session.name = req.body.username;
+        req.session.id = accInfo[0].id;
 
         res.redirect(`/students/${req.body.username}`);
     }
@@ -213,9 +235,11 @@ router.post("/modify-equipment", urlencodedParser, async (req, res) => {
 });
 
 router.post("/student-booked", urlencodedParser, async (req, res) => {
-    console.log(req.body.quantity);
     console.log(req.body.date);
+    await website.bookEquipment(req.session.id, req.body.id, req.body.quantity, req.body.date);
 
+
+    res.redirect(`/students/${req.session.name}`);
 });
 
 module.exports = router;

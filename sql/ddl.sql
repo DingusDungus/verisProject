@@ -38,13 +38,14 @@ CREATE TABLE equipment (
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
 CREATE TABLE equipment_student (
+    id INT AUTO_INCREMENT NOT NULL,
     e_id INT NOT NULL,
     s_id INT NOT NULL,
     booked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     quantity INT,
     picked_up TIMESTAMP DEFAULT 0,
     returned TIMESTAMP DEFAULT 0,
-    PRIMARY KEY (e_id, s_id),
+    PRIMARY KEY (id),
     FOREIGN KEY (e_id) REFERENCES equipment(id),
     FOREIGN KEY (s_id) REFERENCES students(id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
@@ -169,6 +170,20 @@ DROP PROCEDURE IF EXISTS equipment_book;
 
 DROP PROCEDURE IF EXISTS show_booked_dates;
 
+DROP PROCEDURE IF EXISTS get_account_info;
+
+DROP PROCEDURE IF EXISTS registerCheck_admins;
+
+DROP PROCEDURE IF EXISTS checkForAvailability;
+
+DROP PROCEDURE IF EXISTS decreaseAvailable;
+
+DROP PROCEDURE IF EXISTS showBookedForStudent;
+
+DROP PROCEDURE IF EXISTS showPickupReady;
+
+DROP PROCEDURE IF EXISTS picked_up;
+
 
 DELIMITER ;;
 
@@ -211,6 +226,21 @@ SELECT
     *
 FROM
     students
+WHERE
+    username = p_username;
+
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE registerCheck_admins(p_username VARCHAR(30)) BEGIN
+SELECT
+    *
+FROM
+    admins
 WHERE
     username = p_username;
 
@@ -411,12 +441,13 @@ DELIMITER ;;
 CREATE PROCEDURE equipment_book(
     ps_id INT,
     pe_id INT,
-    p_quantity INT
+    p_quantity INT,
+    p_date TIMESTAMP
 ) BEGIN
 INSERT INTO
-    equipment_student(s_id, e_id, quantity)
+    equipment_student(s_id, e_id, quantity, booked)
 VALUES
-    (ps_id, pe_id, p_quantity);
+    (ps_id, pe_id, p_quantity, p_date);
 END
 ;;
 
@@ -429,6 +460,96 @@ BEGIN
     SELECT booked FROM equipment_student
         WHERE booked != 0 and picked_up = 0
         ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE get_account_info(
+    p_username VARCHAR(30)
+) 
+BEGIN
+    SELECT * FROM students
+        WHERE username = p_username
+        ;
+
+    SELECT * FROM admins
+        WHERE username = p_username
+        ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE decreaseAvailable(
+    p_id INT,
+    p_quantity INT
+) 
+BEGIN
+UPDATE equipment SET 
+        available = (available - p_quantity)
+    WHERE id = p_id;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE checkForAvailability(
+    p_id INT,
+    p_quantity INT
+) 
+BEGIN
+SELECT id FROM equipment
+    WHERE available >= quantity
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE showBookedForStudent(
+    p_id INT,
+    p_quantity INT
+) 
+BEGIN
+SELECT id FROM equipment
+    WHERE available >= p_quantity
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE showPickupReady(
+    p_id INT
+) 
+BEGIN
+SELECT es.id AS es_id,equipment.id, equipment.e_name, es.booked FROM equipment JOIN equipment_student AS es ON es.e_id = equipment.id
+    WHERE es.s_id = p_id AND es.picked_up = 0;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE pick_up(
+    p_id INT
+)
+BEGIN
+UPDATE equipment_student SET 
+        picked_up = NOW()
+    WHERE id = p_id;
 END
 ;;
 

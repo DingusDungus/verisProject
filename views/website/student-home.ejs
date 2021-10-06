@@ -1,3 +1,25 @@
 <%- include("studentHeader", {title: title}); %>
-<h1>HELLO USER!</h1>
+<div style="overflow-x:auto;">
+    <table>
+        <legend><h3>Pick up</h3></legend>
+        <tr>
+            <th>Booking Id</th>
+            <th>Equipment Id</th>
+            <th>Name</th>
+            <th>Booked</th>
+            <th>Pick up</th>
+        </tr>
+        <% for(var i = 0; i < result1.length; i++) { %>
+            <tr>
+          <td><%= result1[i].es_id %></td>
+          <td><%= result1[i].id %></td>
+          <td><%= result1[i].e_name %></td>
+          <td><%= result1[i].booked.toLocaleDateString() %></td>
+          <td>
+            <a href="/student-features/pick-up/<%= result1[i].es_id %>">&#x270e;</a>
+          </td>
+        </tr>
+        <% } %>
+    </table>
+    </div>
 <%- include("footer"); %>

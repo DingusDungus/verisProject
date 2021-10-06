@@ -102,9 +102,38 @@ let website = {
 
         return result[0];
     },
-    bookEquipment: async function(e_id, s_id, item_id,quantity, date)
+    bookEquipment: async function(e_id, s_id, quantity, date)
     {
+        let sql = `CALL equipment_book(?,?,?,?)`;
+        let splitDate = date.split('/');
+        splitDate[2].split(" ");
+        let year = splitDate[2].split(' ');
+        console.info(year);
+        let newDate = new Date(year[0], splitDate[0] - 1, splitDate[1]);
+        console.log(newDate.toDateString());
 
+        let result = await db.query(sql, [s_id, e_id, quantity, newDate]);
+
+        return result[0];
+    },
+    getAccountInfo: async function(username)
+    {
+        let sql = `CALL get_account_info(?)`;
+        let result = await db.query(sql, [username]);
+
+        return result[0];
+    },
+    showPickupReady: async function(id)
+    {
+        let sql = `CALL showPickupReady(?);`;
+        let result = await db.query(sql, [id]);
+
+        return result[0];
+    },
+    pick_up: async function(id)
+    {
+        let sql = `CALL pick_up(?);`;
+        await db.query(sql, [id]);
     }
 };
 
