@@ -48,10 +48,16 @@ router.get("/students/:username", async (req, res) => {
         let data = {
             title: "User view | The Website",
             name: req.session.name,
-            result1: []
+            result1: [],
+            result2: []
         };
 
         data.result1 = await website.showPickupReady(req.session.id);
+        console.log(data.result1);
+
+        data.result2 = await website.showReturnableAndOverdue(req.session.id);
+
+        console.log(data.result2);
 
         res.render("website/student-home", data);
     }
@@ -135,18 +141,49 @@ router.get("/student-features/book/:id", async (req, res) => {
     };
     data.results = await website.getEquipmentInfo(req.params.id);
     data.results = data.results[0];
-    let disabledDates = await website.showBookedDates();
-    
-    for (let i = 0;i < disabledDates.length;i++)
+    let disabledDates = await website.showBookedDates(req.params.id);
+    console.log(disabledDates);
+    for (let i = 0;i < disabledDates[0].length;i++)
     {
-        data.disabledDate.push(disabledDates[i].booked.toLocaleDateString('fr-CA'));
+        data.disabledDate.push(disabledDates[0][i].booked.toLocaleDateString('fr-CA'));
     }
-    data.disabledDate.push('2021-10-10');
+
+    for (let i = 0;i < disabledDates[1].length;i++)
+    {
+        data.disabledDate.push(disabledDates[1][i].reserved.toLocaleDateString('fr-CA'));
+    }
 
     console.log(data.disabledDate);
 
 
     res.render("website/equipment-book-followed.ejs", data)
+});
+
+router.get("/admin-features/reserve/:id", async (req, res) => {
+    let data = {
+        title: "Book | Veris",
+        results: [],
+        name: req.session.name,
+        disabledDate: []
+    };
+    data.results = await website.getEquipmentInfo(req.params.id);
+    data.results = data.results[0];
+    let disabledDates = await website.showBookedDates(req.params.id);
+    
+    for (let i = 0;i < disabledDates[0].length;i++)
+    {
+        data.disabledDate.push(disabledDates[0][i].booked.toLocaleDateString('fr-CA'));
+    }
+
+    for (let i = 0;i < disabledDates[1].length;i++)
+    {
+        data.disabledDate.push(disabledDates[1][i].reserved.toLocaleDateString('fr-CA'));
+    }
+
+    console.log(data.disabledDate);
+
+
+    res.render("website/equipment-reserve-followed.ejs", data)
 });
 
 router.get("/student-features/pick-up/:es_id", async (req, res) => {
@@ -157,6 +194,18 @@ router.get("/student-features/pick-up/:es_id", async (req, res) => {
     };
 
     await website.pick_up(req.params.es_id);
+
+    res.redirect(`/students/${req.session.name}`);
+});
+
+router.get("/student-features/return/:id/:e_id", async (req, res) => {
+    let data = {
+        title: "Book | Veris",
+        results: [],
+        name: req.session.name
+    };
+
+    await website.returnEquipment(req.params.id, req.params.e_id);
 
     res.redirect(`/students/${req.session.name}`);
 });
@@ -235,11 +284,31 @@ router.post("/modify-equipment", urlencodedParser, async (req, res) => {
 });
 
 router.post("/student-booked", urlencodedParser, async (req, res) => {
-    console.log(req.body.date);
-    await website.bookEquipment(req.session.id, req.body.id, req.body.quantity, req.body.date);
+    await website.bookEquipment(req.session.id, req.body.id, req.body.date);
 
 
     res.redirect(`/students/${req.session.name}`);
+});
+
+router.post("/admin-reserved", urlencodedParser, async (req, res) => {
+    let splitDate = req.body.date1.split('/');
+    splitDate[2].split(" ");
+    let year = splitDate[2].split(' ');
+    console.info(year);
+    let newDate1 = new Date(year[0], splitDate[0] - 1, splitDate[1]);
+
+    let splitDate1 = req.body.date2.split('/');
+        splitDate1[2].split(" ");
+        let year1 = splitDate1[2].split(' ');
+        console.info(year);
+        let newDate2 = new Date(year1[0], splitDate1[0] - 1, splitDate1[1]);
+
+    for (let loopDate = newDate1;loopDate < newDate2;loopDate.setDate(loopDate.getDate() + 1))
+    {
+        website.reserve(req.session.id, req.body.id, loopDate);
+    }
+
+    res.redirect(`/admins/${req.session.name}`);
 });
 
 module.exports = router;

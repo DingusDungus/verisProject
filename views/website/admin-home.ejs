@@ -13,9 +13,8 @@
         <th>Name</th>
         <th>Description</th>
         <th>Status</th>
-        <th>Quantity</th>
-        <th>Available</th>
         <th>Action</th>
+        <th>Reserve</th>
     </tr>
     <% for(var i = 0; i < results.length; i++) { %>
         <tr>
@@ -23,11 +22,12 @@
       <td><%= results[i].e_name %></td>
       <td><%= results[i].e_description %></td>
       <td><%= results[i].e_status %></td>
-      <td><%= results[i].quantity %></td>
-      <td><%= results[i].available %></td>
       <td>
         <a href="/admin-features/modify/<%= results[i].id %>">&#x270e;</a>
         <a href="/admin-features/remove/<%= results[i].id %>">&#x1F5D1;</a>
+      </td>
+      <td>
+        <a href="/admin-features/reserve/<%= results[i].id %>">Reserve</a>
       </td>
     </tr>
     <% } %>

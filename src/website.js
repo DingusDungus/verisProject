@@ -54,8 +54,11 @@ let website = {
         return res[0];
     },
     addEquipment: async function(name, description, quantity) {
-        let sql = `CALL equipment_add(?, ?, ?);`;
-        await db.query(sql, [name, description, quantity]);
+        let sql = `CALL equipment_add(?, ?);`;
+        for (let i = 0;i < quantity;i++)
+        {
+            await db.query(sql, [name, description]);
+        }
     },
     addEquipmentTest: async function()
     {
@@ -81,10 +84,10 @@ let website = {
 
         return result[0];
     },
-    modifyEquipment: async function(id, name, description, quantity)
+    modifyEquipment: async function(id, name, description)
     {
-        let sql = `CALL equipment_modify(?, ?, ?, ?);`;
-        let result = await db.query(sql, [id, name, description, quantity]);
+        let sql = `CALL equipment_modify(?, ?, ?);`;
+        let result = await db.query(sql, [id, name, description]);
 
         return result[0];
     },
@@ -95,16 +98,16 @@ let website = {
 
         return result[0];
     },
-    showBookedDates: async function()
+    showBookedDates: async function(id)
     {
-        let sql = `CALL show_booked_dates();`;
-        let result = await db.query(sql);
+        let sql = `CALL show_booked_dates(?);`;
+        let result = await db.query(sql, [id]);
 
-        return result[0];
+        return result;
     },
-    bookEquipment: async function(e_id, s_id, quantity, date)
+    bookEquipment: async function(s_id, e_id, date)
     {
-        let sql = `CALL equipment_book(?,?,?,?)`;
+        let sql = `CALL equipment_book(?,?,?)`;
         let splitDate = date.split('/');
         splitDate[2].split(" ");
         let year = splitDate[2].split(' ');
@@ -112,9 +115,11 @@ let website = {
         let newDate = new Date(year[0], splitDate[0] - 1, splitDate[1]);
         console.log(newDate.toDateString());
 
-        let result = await db.query(sql, [s_id, e_id, quantity, newDate]);
+        console.log("Student id:" + s_id);
+        console.log("Equipment id:" + e_id);
 
-        return result[0];
+        await db.query(sql, [s_id, e_id, newDate]);
+
     },
     getAccountInfo: async function(username)
     {
@@ -134,6 +139,25 @@ let website = {
     {
         let sql = `CALL pick_up(?);`;
         await db.query(sql, [id]);
+    },
+    showReturnableAndOverdue: async function(id)
+    {
+        let sql = `CALL showReturnableAndOverdue(?);`;  
+        let result = await db.query(sql, [id]);
+
+        return result;
+    },
+    returnEquipment: async function(id, e_id)
+    {
+        let sql = `CALL e_return(?,?);`;
+
+        await db.query(sql, [id, e_id]);
+    },
+    reserve: async function(a_id, e_id, date)
+    {
+        let sql = `CALL equipment_reserve(?,?,?);`;
+
+        await db.query(sql, [a_id, e_id, date]);
     }
 };
 

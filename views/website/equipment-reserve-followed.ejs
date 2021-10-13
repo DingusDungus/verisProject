@@ -21,10 +21,10 @@
     <main class="container">
         <section class="col-sm-12">
 
-<form class="label-left" method="post" action="/student-booked">
+<form class="label-left" method="post" action="/admin-reserved">
 
         <div class="form-group">
-        <legend>Book <%= results.e_name %></legend>
+        <legend>Reserve <%= results.e_name %></legend>
         <label for="id">ID</label>
         <input id="id" type="text" name="id" readonly value= "<%= results.id %>">
           <div class="input-group input-group-sm mb-3">
@@ -33,12 +33,18 @@
 
             </div>
         </div>
-            
           </div>
           
         <div class='input-group date' id='datetimepicker1'>
             <div class="input-group-addon">
-                <input type="text" class="form-control" name="date">
+                <label for="date1">Start date</label>
+                <input type="text" class="form-control" name="date1">
+            </div>
+        </div>
+        <div class='input-group date' id='datetimepicker2'>
+            <div class="input-group-addon">
+                <label for="date2">End date</label>
+                <input type="text" class="form-control" name="date2">
             </div>
         </div>
 
@@ -52,6 +58,9 @@ let dates = <%- JSON.stringify(disabledDate) %>
     
     $(function() {
         $('#datetimepicker1').datetimepicker({
+            disabledDates: dates
+        });
+        $('#datetimepicker2').datetimepicker({
             disabledDates: dates
         });
         

@@ -121,6 +121,13 @@ input[type=password] {
     background-color: #d1d1d1e1;
 }
 
+input[type=email] {
+    border: 2px solid black;
+    border-radius: 4px;
+    background-color: #d1d1d1e1;
+    background-image: url('searchicon.png');
+}
+
 #button1 {
     background-color: grey;
     border: none;
@@ -196,4 +203,3 @@ input[type=password] {
     margin-left: 40%;
     margin-top: 15%;
 }
-

@@ -22,4 +22,29 @@
         <% } %>
     </table>
     </div>
+    <div style="overflow-x:auto;">
+      <table>
+          <legend><h3>Return</h3></legend>
+          <tr>
+              <th>Booking Id</th>
+              <th>Equipment Id</th>
+              <th>Name</th>
+              <th>Booked</th>
+              <th>Overdue</th>
+              <th>Return</th>
+          </tr>
+          <% for(var i = 0; i < result2[0].length; i++) { %>
+              <tr>
+            <td><%= result2[0][i].es_id %></td>
+            <td><%= result2[0][i].id %></td>
+            <td><%= result2[0][i].e_name %></td>
+            <td><%= result2[0][i].booked.toLocaleDateString() %></td>
+            <td><%= result2[1][i].overdue %></td>
+            <td>
+              <a href="/student-features/return/<%= result2[0][i].es_id %>/<%= result2[0][i].id %>">&#x270e;</a>
+            </td>
+          </tr>
+          <% } %>
+      </table>
+      </div>
 <%- include("footer"); %>

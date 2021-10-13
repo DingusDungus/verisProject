@@ -1,8 +1,12 @@
 USE website;
 
-DROP TABLE IF EXISTS logs;
+DROP TABLE IF EXISTS logs_students;
+
+DROP TABLE IF EXISTS logs_admins;
 
 DROP TABLE IF EXISTS equipment_student;
+
+DROP TABLE IF EXISTS equipment_admin;
 
 DROP TABLE IF EXISTS students;
 
@@ -32,8 +36,6 @@ CREATE TABLE equipment (
     e_description VARCHAR(200),
     e_status VARCHAR(10) DEFAULT "Free",
     deleted TIMESTAMP DEFAULT 0,
-    quantity INT DEFAULT 1,
-    available INT DEFAULT quantity,
     PRIMARY KEY (id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
@@ -42,7 +44,6 @@ CREATE TABLE equipment_student (
     e_id INT NOT NULL,
     s_id INT NOT NULL,
     booked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    quantity INT,
     picked_up TIMESTAMP DEFAULT 0,
     returned TIMESTAMP DEFAULT 0,
     PRIMARY KEY (id),
@@ -50,7 +51,17 @@ CREATE TABLE equipment_student (
     FOREIGN KEY (s_id) REFERENCES students(id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
-CREATE TABLE logs (
+CREATE TABLE equipment_admin (
+    id INT AUTO_INCREMENT NOT NULL,
+    e_id INT NOT NULL,
+    a_id INT NOT NULL,
+    reserved TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (e_id) REFERENCES equipment(id),
+    FOREIGN KEY (a_id) REFERENCES admins(id)
+) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
+
+CREATE TABLE logs_students (
     id INT AUTO_INCREMENT NOT NULL,
     s_id INT,
     e_id INT,
@@ -60,60 +71,32 @@ CREATE TABLE logs (
     FOREIGN KEY (e_id) REFERENCES equipment(id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
+CREATE TABLE logs_admins (
+    id INT AUTO_INCREMENT NOT NULL,
+    a_id INT,
+    e_id INT,
+    descriptions VARCHAR(100),
+    PRIMARY KEY(id),
+    FOREIGN KEY (s_id) REFERENCES students(id),
+    FOREIGN KEY (e_id) REFERENCES equipment(id)
+) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
+
 -- TRIGGERED
-DROP TRIGGER IF EXISTS equipment_booked;
-
-DROP TRIGGER IF EXISTS equipment_student_update;
-
-DELIMITER ;;
-
-CREATE TRIGGER equipment_booked
-AFTER
-INSERT
-    ON equipment_student FOR EACH ROW BEGIN
-INSERT INTO
-    logs (s_id, e_id, descriptions)
-VALUES
-    (NEW.e_id, NEW.s_id, "Booked equipment ");
-
-END
-;;
-
-DELIMITER ;
+DROP TRIGGER IF EXISTS update_status_student;
+DROP TRIGGER IF EXISTS insert_status_student;
+DROP TRIGGER IF EXISTS update_status_admin;
+DROP TRIGGER IF EXISTS insert_status_admin;
 
 DELIMITER ;;
 
-CREATE TRIGGER equipment_student_update
-AFTER
-UPDATE
-    ON equipment_student FOR EACH ROW 
+CREATE TRIGGER update_status_student
+AFTER UPDATE
+ON equipment_student 
+FOR EACH ROW
 BEGIN
-IF NEW.returned != 0 THEN
-
-INSERT INTO
-    logs (s_id, e_id, descriptions)
-VALUES
-    (
-        NEW.s_id,
-        NEW.e_id,
-        CONCAT(NEW.s_id, " returned ", NEW.e_id)
-    );
-
-END IF;
-
-IF NEW.returned = 0 AND NEW.picked_up != 0 THEN
-
-INSERT INTO
-    logs (s_id, e_id, descriptions)
-VALUES
-    (
-        NEW.s_id,
-        NEW.e_id,
-        CONCAT(NEW.s_id, " picked up ", NEW.e_id)
-    );
-
-END IF;
-
+    INSERT INTO logs_students(s_id, e_id, descriptions) 
+        VALUES(NEW.s_id, NEW.e_id, CONCAT("Student action; Status changed for item, status is: ", (SELECT e_status FROM equipment WHERE id = OLD.e_id)))
+    ;
 END
 ;;
 
@@ -121,23 +104,53 @@ DELIMITER ;
 
 DELIMITER ;;
 
-CREATE TRIGGER equipment_picked_up
-AFTER
-UPDATE
-    ON equipment_student FOR EACH ROW BEGIN
-INSERT INTO
-    logs (s_id, e_id)
-VALUES
-    (
-        NEW.s_id, NEW.e_id
-    );
-
+CREATE TRIGGER insert_status_student
+AFTER INSERT
+ON equipment_student 
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs_students(s_id, e_id, descriptions) 
+        VALUES(NEW.s_id, NEW.e_id, "Item has been booked by student")
+    ;
 END
 ;;
 
 DELIMITER ;
+
+DELIMITER ;;
+
+CREATE TRIGGER update_status_admin
+AFTER UPDATE
+ON equipment_admin
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs(a_id, e_id, descriptions) 
+        VALUES(NEW.a_id, NEW.e_id, CONCAT("Admin action; Status changed for item, status is: ", (SELECT e_status FROM equipment WHERE id = OLD.e_id)))
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE TRIGGER insert_status_admin
+AFTER INSERT
+ON equipment_admin
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs(a_id, e_id, descriptions) 
+        VALUES(NEW.a_id, NEW.e_id, "Item has been reserved by admin")
+    ;
+END
+;;
+
+DELIMITER ;
+
 
 -- PRODECURES BABIEEE!!!!!!
+DROP PROCEDURE IF EXISTS pick_up;
+
 DROP PROCEDURE IF EXISTS register_students;
 
 DROP PROCEDURE IF EXISTS login_check_students;
@@ -182,8 +195,15 @@ DROP PROCEDURE IF EXISTS showBookedForStudent;
 
 DROP PROCEDURE IF EXISTS showPickupReady;
 
-DROP PROCEDURE IF EXISTS picked_up;
+DROP PROCEDURE IF EXISTS e_return;
 
+DROP PROCEDURE IF EXISTS showReturnableAndOverdue;
+
+DROP PROCEDURE IF EXISTS equipment_reserve;
+
+DROP PROCEDURE IF EXISTS e_return_admin;
+
+DROP PROCEDURE IF EXISTS show_logs;
 
 DELIMITER ;;
 
@@ -309,13 +329,12 @@ DELIMITER ;;
 
 CREATE PROCEDURE equipment_add(
     p_name VARCHAR(30),
-    p_description VARCHAR(200),
-    p_quantity INT
+    p_description VARCHAR(200)
     ) BEGIN
 INSERT INTO
-    equipment (e_name, e_description, quantity)
+    equipment (e_name, e_description)
 VALUES
-    (p_name, p_description, p_quantity);
+    (p_name, p_description);
 
 END
 ;;
@@ -374,12 +393,11 @@ DELIMITER ;;
 CREATE PROCEDURE equipment_modify(
     p_id INT,
     p_name VARCHAR(20),
-    p_description VARCHAR(200),
-    p_quantity INT
+    p_description VARCHAR(200)
 ) BEGIN
 
 UPDATE equipment SET 
-        e_name = p_name, e_description = p_description, quantity = p_quantity
+        e_name = p_name, e_description = p_description
     WHERE id = p_id;
 END
 ;;
@@ -441,13 +459,19 @@ DELIMITER ;;
 CREATE PROCEDURE equipment_book(
     ps_id INT,
     pe_id INT,
-    p_quantity INT,
     p_date TIMESTAMP
 ) BEGIN
 INSERT INTO
-    equipment_student(s_id, e_id, quantity, booked)
+    equipment_student(s_id, e_id, booked)
 VALUES
-    (ps_id, pe_id, p_quantity, p_date);
+    (ps_id, pe_id, p_date)
+    ;
+
+UPDATE equipment SET 
+        e_status = "Booked"
+    WHERE id = pe_id
+    ;
+
 END
 ;;
 
@@ -455,12 +479,39 @@ DELIMITER ;
 
 DELIMITER ;;
 
-CREATE PROCEDURE show_booked_dates() 
+CREATE PROCEDURE equipment_reserve(
+    pa_id INT,
+    pe_id INT,
+    p_date TIMESTAMP
+) BEGIN
+UPDATE equipment SET 
+        e_status = "Booked"
+    WHERE id = pe_id
+    ;
+
+INSERT INTO
+    equipment_admin(a_id, e_id, reserved)
+VALUES
+    (pa_id, pe_id, p_date)
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_booked_dates(
+    p_id INT
+) 
 BEGIN
     SELECT booked FROM equipment_student
-        WHERE booked != 0 and picked_up = 0
+        WHERE booked != 0 AND picked_up = 0 AND e_id = p_id
         ;
-END
+    SELECT reserved FROM equipment_admin
+        WHERE reserved != 0
+        ;
+END 
 ;;
 
 DELIMITER ;
@@ -478,21 +529,6 @@ BEGIN
     SELECT * FROM admins
         WHERE username = p_username
         ;
-END
-;;
-
-DELIMITER ;
-
-DELIMITER ;;
-
-CREATE PROCEDURE decreaseAvailable(
-    p_id INT,
-    p_quantity INT
-) 
-BEGIN
-UPDATE equipment SET 
-        available = (available - p_quantity)
-    WHERE id = p_id;
 END
 ;;
 
@@ -535,7 +571,8 @@ CREATE PROCEDURE showPickupReady(
 ) 
 BEGIN
 SELECT es.id AS es_id,equipment.id, equipment.e_name, es.booked FROM equipment JOIN equipment_student AS es ON es.e_id = equipment.id
-    WHERE es.s_id = p_id AND es.picked_up = 0;
+    WHERE es.s_id = p_id AND es.picked_up = 0 AND es.booked = CURDATE() AND es.booked NOT IN (SELECT reserved FROM equipment_admin WHERE e_id = es.e_id);
+    
 END
 ;;
 
@@ -547,9 +584,88 @@ CREATE PROCEDURE pick_up(
     p_id INT
 )
 BEGIN
+UPDATE equipment SET
+        e_status = "picked up"
+    WHERE id = (SELECT e_id FROM equipment_student WHERE id = p_id)
+    ;
+
 UPDATE equipment_student SET 
         picked_up = NOW()
     WHERE id = p_id;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE e_return(
+    pb_id INT,
+    pe_id INT
+)
+BEGIN
+UPDATE equipment SET 
+        e_status = "Free"
+    WHERE id = pe_id
+    ;
+
+UPDATE equipment_student SET 
+        returned = NOW()
+    WHERE id = pb_id
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE e_return_admin(
+    pb_id INT,
+    pe_id INT
+)
+BEGIN
+UPDATE equipment SET 
+        e_status = "Free"
+    WHERE id = pe_id
+    ;
+UPDATE equipment_admin SET 
+        returned = NOW()
+    WHERE id = pb_id
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE showReturnableAndOverdue(
+    p_id INT
+)
+BEGIN
+SELECT es.id AS es_id,equipment.id, equipment.e_name, es.booked FROM equipment JOIN equipment_student AS es ON es.e_id = equipment.id
+    WHERE es.s_id = p_id AND es.picked_up != 0 AND es.returned = 0
+    ;
+SELECT IF(CURRENT_TIMESTAMP >= DATE_ADD(booked, INTERVAL 1 DAY), "Yes", "No") AS overdue FROM equipment_student
+    WHERE s_id = p_id AND picked_up != 0 AND returned = 0
+;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_logs()
+BEGIN
+SELECT  FROM logs_students
+SELECT s.id ,s.username, sl.id, sl.descriptions FROM logs_students AS sl
+    JOIN students AS s ON sl.s_id = s.id
+    ;
+SELECT a.id ,a.username, sa.id, sa.descriptions FROM logs_admins AS sa
+    JOIN admins AS a ON sa.a_id = a.id
+    ;
 END
 ;;
 
