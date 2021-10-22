@@ -4,21 +4,35 @@ DROP TABLE IF EXISTS logs_students;
 
 DROP TABLE IF EXISTS logs_admins;
 
-DROP TABLE IF EXISTS equipment_student;
-
 DROP TABLE IF EXISTS equipment_admin;
 
-DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS equipment_student;
 
 DROP TABLE IF EXISTS admins;
 
+DROP TABLE IF EXISTS students;
+
 DROP TABLE IF EXISTS equipment;
+
+DROP TABLE IF EXISTS super_user;
+
+CREATE TABLE super_user (
+    username VARCHAR(30) DEFAULT "superUser",
+    passwordUser VARCHAR(64) DEFAULT SHA2("password", "256")
+) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
+
+INSERT INTO
+    super_user(username)
+VALUES
+    ("superUser")
+    ;
 
 CREATE TABLE students (
     id INT AUTO_INCREMENT NOT NULL,
     username VARCHAR(30),
-    passwordUser VARCHAR(30),
+    passwordUser VARCHAR(64),
     email VARCHAR(50),
+    deleted TIMESTAMP DEFAULT 0,
     PRIMARY KEY(id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
@@ -77,7 +91,7 @@ CREATE TABLE logs_admins (
     e_id INT,
     descriptions VARCHAR(100),
     PRIMARY KEY(id),
-    FOREIGN KEY (s_id) REFERENCES students(id),
+    FOREIGN KEY (a_id) REFERENCES admins(id),
     FOREIGN KEY (e_id) REFERENCES equipment(id)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
@@ -124,7 +138,7 @@ AFTER UPDATE
 ON equipment_admin
 FOR EACH ROW
 BEGIN
-    INSERT INTO logs(a_id, e_id, descriptions) 
+    INSERT INTO logs_admins(a_id, e_id, descriptions) 
         VALUES(NEW.a_id, NEW.e_id, CONCAT("Admin action; Status changed for item, status is: ", (SELECT e_status FROM equipment WHERE id = OLD.e_id)))
     ;
 END
@@ -139,7 +153,7 @@ AFTER INSERT
 ON equipment_admin
 FOR EACH ROW
 BEGIN
-    INSERT INTO logs(a_id, e_id, descriptions) 
+    INSERT INTO logs_admins(a_id, e_id, descriptions) 
         VALUES(NEW.a_id, NEW.e_id, "Item has been reserved by admin")
     ;
 END
@@ -205,6 +219,75 @@ DROP PROCEDURE IF EXISTS e_return_admin;
 
 DROP PROCEDURE IF EXISTS show_logs;
 
+DROP PROCEDURE IF EXISTS show_logs_search;
+
+DROP PROCEDURE IF EXISTS show_accounts;
+
+DROP PROCEDURE IF EXISTS delete_student;
+
+DROP PROCEDURE IF EXISTS show_accounts_search;
+
+DROP PROCEDURE IF EXISTS usernameTaken_check;
+
+DROP PROCEDURE IF EXISTS show_items_admin;
+
+DROP PROCEDURE IF EXISTS super_user_login_check;
+
+DROP PROCEDURE IF EXISTS super_user_change_password;
+
+DROP PROCEDURE IF EXISTS super_user_change_username;
+
+DROP PROCEDURE IF EXISTS show_booking;
+
+DELIMITER ;;
+
+CREATE PROCEDURE super_user_change_username(
+    p_username VARCHAR(64)
+) BEGIN
+
+UPDATE super_user SET 
+        username = p_username
+    WHERE id = p_id
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE super_user_change_password(
+    p_password VARCHAR(64)
+) BEGIN
+
+UPDATE super_user SET 
+        passwordUser = SHA2(p_password, "256")
+    WHERE id = p_id
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE super_user_login_check(
+    p_username VARCHAR(30),
+    p_passwordUser VARCHAR(30)
+) BEGIN
+SELECT
+    *
+FROM
+    super_user
+WHERE
+    username = p_username
+    AND passwordUser = SHA2(p_passwordUser, "256");
+
+END
+;;
+
+DELIMITER ;
+
 DELIMITER ;;
 
 CREATE PROCEDURE register_admins(
@@ -232,7 +315,7 @@ CREATE PROCEDURE register_students(
 INSERT INTO
     students (username, passwordUser, email)
 VALUES
-    (p_username, p_passwordUser, p_email);
+    (p_username, SHA2(p_passwordUser, "256"), p_email);
 
 END
 ;;
@@ -241,29 +324,24 @@ DELIMITER ;
 
 DELIMITER ;;
 
-CREATE PROCEDURE registerCheck_students(p_username VARCHAR(30)) BEGIN
+CREATE PROCEDURE usernameTaken_check(
+    p_username VARCHAR(30)
+) BEGIN
 SELECT
-    *
+    id
 FROM
     students
 WHERE
-    username = p_username;
+    username = p_username
+;
 
-END
-;;
-
-DELIMITER ;
-
-DELIMITER ;;
-
-CREATE PROCEDURE registerCheck_admins(p_username VARCHAR(30)) BEGIN
 SELECT
-    *
+    id
 FROM
     admins
 WHERE
-    username = p_username;
-
+    username = p_username
+;
 END
 ;;
 
@@ -281,7 +359,8 @@ FROM
     students
 WHERE
     username = p_username
-    AND passwordUser = p_passwordUser;
+    AND passwordUser = SHA2(p_passwordUser, "256")
+    AND deleted = 0;
 
 END
 ;;
@@ -366,7 +445,8 @@ CREATE PROCEDURE equipment_remove(
 
 UPDATE equipment SET 
         deleted = NOW()
-    WHERE id = p_id;
+    WHERE id = p_id
+    ;
 END
 ;;
 
@@ -509,7 +589,7 @@ BEGIN
         WHERE booked != 0 AND picked_up = 0 AND e_id = p_id
         ;
     SELECT reserved FROM equipment_admin
-        WHERE reserved != 0
+        WHERE reserved != 0 AND e_id = p_id
         ;
 END 
 ;;
@@ -659,12 +739,126 @@ DELIMITER ;;
 
 CREATE PROCEDURE show_logs()
 BEGIN
-SELECT  FROM logs_students
-SELECT s.id ,s.username, sl.id, sl.descriptions FROM logs_students AS sl
+SELECT s.id AS student_id,s.username, sl.id, sl.e_id, e.e_name, sl.descriptions 
+    FROM logs_students AS sl
     JOIN students AS s ON sl.s_id = s.id
+    JOIN equipment AS e ON sl.e_id = e.id
     ;
-SELECT a.id ,a.username, sa.id, sa.descriptions FROM logs_admins AS sa
-    JOIN admins AS a ON sa.a_id = a.id
+SELECT a.id AS admin_id ,a.username, al.id, al.e_id, e.e_name, al.descriptions 
+    FROM logs_admins AS al
+    JOIN admins AS a ON al.a_id = a.id
+    JOIN equipment AS e ON al.e_id = e.id
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_logs_search(
+    search VARCHAR(30)
+)
+BEGIN
+SELECT s.id AS student_id,s.username, sl.id, sl.e_id, e.e_name, sl.descriptions 
+    FROM logs_students AS sl
+    JOIN students AS s ON sl.s_id = s.id
+    JOIN equipment AS e ON sl.e_id = e.id
+    WHERE
+    (s.username LIKE CONCAT("%", search, "%") OR s.id LIKE CONCAT("%", search, "%") OR sl.id LIKE CONCAT("%", search, "%") OR sl.e_id LIKE CONCAT("%", search, "%") OR e.e_name LIKE CONCAT("%", search, "%"))
+    ;
+SELECT a.id AS admin_id ,a.username, al.id, al.e_id, e.e_name, al.descriptions 
+    FROM logs_admins AS al
+    JOIN admins AS a ON al.a_id = a.id
+    JOIN equipment AS e ON al.e_id = e.id
+    WHERE
+    (a.username LIKE CONCAT("%", search, "%") OR a.id LIKE CONCAT("%", search, "%") OR al.id LIKE CONCAT("%", search, "%") OR al.e_id LIKE CONCAT("%", search, "%") OR e.e_name LIKE CONCAT("%", search, "%"))
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_accounts()
+BEGIN
+    SELECT id, username, email FROM students
+    WHERE deleted = 0
+    ;
+    
+    SELECT id, username, email FROM admins;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_accounts_search(
+    search VARCHAR(30)
+)
+BEGIN
+    SELECT id, username, email FROM students
+        WHERE deleted = 0 AND (id LIKE CONCAT("%", search, "%") OR username LIKE CONCAT("%", search, "%") OR email LIKE CONCAT("%", search, "%"))
+    ;
+    
+    SELECT id, username, email FROM admins
+        WHERE id LIKE CONCAT("%", search, "%") OR username LIKE CONCAT("%", search, "%") OR email LIKE CONCAT("%", search, "%");
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE delete_student(
+    p_id INT
+)
+BEGIN
+    UPDATE students SET
+        deleted = NOW()
+    WHERE id = p_id;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_items_admin()
+BEGIN
+SELECT
+    e_name,
+    e_description,
+    COUNT(*) as quantity
+FROM
+    equipment
+WHERE
+    deleted = 0
+GROUP BY
+    e_name, e_description
+    ;
+END
+;;
+
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE PROCEDURE show_booking(
+    pe_id INT,
+    p_id INT
+)
+BEGIN
+    SELECT ea.id AS booking_id, a.username, ea.reserved FROM equipment_admin AS ea
+        JOIN admins AS a ON ea.a_id = a.id
+        WHERE ea.e_id = pe_id AND ea.a_id = p_id AND ea.reserved = CURRENT_DATE
+    ;
+
+    SELECT es.id AS booking_id, s.username, s.email, es.booked FROM equipment_student AS es
+        JOIN students AS s ON es.s_id = s.id
+        WHERE es.e_id = pe_id AND es.s_id = p_id AND es.booked = CURRENT_DATE AND picked_up != 0
     ;
 END
 ;;

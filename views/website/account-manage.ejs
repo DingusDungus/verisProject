@@ -1,0 +1,93 @@
+<%- include("admin-header", {title: title, name: name}); %>
+
+<h1>Account Management</h1><br>
+<form class="form-inline" method="post" action="/admin-account-search">
+    <div class="form-group mx-sm-3 mb-2">
+      <input type="text" name="search" class="form-control" placeholder="Search">
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Search</button>
+    <button href="/admin-features/manage-accounts" class="btn btn-primary mb-2">Reset</button>
+  </form>
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Delete student</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method=post action="/admin-features/delete-student">
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Recipient:</label>
+              <input type="text" class="form-control" id="recipient-name" readonly name="id">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<div style="overflow-x:auto;">
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">Log ID</th>
+        <th scope="col">Student username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Delete</th>
+
+    </tr>
+</thead>
+    <% for(var i = 0; i < results[0].length; i++) { %>
+
+
+        <tr>
+      <td scope="row"><%= results[0][i].id %></td>
+      <td><%= results[0][i].username %></td>
+      <td><%= results[0][i].email %></td>
+      <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="<%= results[0][i].id %>">&#x1F5D1;</button></td>
+    </tr>
+    <% } %>
+</table>
+</div>
+
+<div style="overflow-x:auto;">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Log ID</th>
+            <th scope="col">Admin username</th>
+            <th scope="col">Email</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+        <% for(var i = 0; i < results[1].length; i++) { %>
+        <tr>
+          <td scope="row"><%= results[1][i].id %></td>
+          <td><%= results[1][i].username %></td>
+          <td><%= results[1][i].email %></td>
+          <td>Restricted</td>
+        </tr>
+        <% } %>
+    </table>
+    </div>
+
+<script>
+$('#exampleModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var recipient = button.data('whatever') // Extract info from data-* attributes
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('.modal-title').text('Delete student: ' + recipient)
+  modal.find('.modal-body input').val(recipient)
+})
+</script>
+
+<%- include("footer"); %>

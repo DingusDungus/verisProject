@@ -21,16 +21,20 @@ let website = {
 
     },
     register: async function (username, password, email) {
-        let success = false;
+        let sql = `CALL register_students(?, ?, ?);`;
+
+        await db.query(sql, [username, password, email]);
+    },
+    usernameTaken: async function (username)
+    {
+        let success = true;
         let res;
-        let sql = `CALL registerCheck_students(?);`;
+        let sql = `CALL usernameTaken_check(?);`;
         res = await db.query(sql, [username]);
-        if (res[0].length == 0) {
-            sql = `CALL register_students(?, ?, ?);`;
-
-
-            await db.query(sql, [username, password, email]);
-            success = true;
+        if (res[0].length == 0 && res[1].length == 0) {
+            if (res[0].length == 0 && res[1].length == 0) {
+                success = false;
+            }
         }
         return success;
     },
@@ -69,6 +73,12 @@ let website = {
     showEquipment: async function()
     {
         let sql = `CALL equipment_show();`;
+        let result = await db.query(sql);
+        return result[0];
+    },
+    showEquipmentAdmin: async function()
+    {
+        let sql = `CALL show_items_admin();`;
         let result = await db.query(sql);
         return result[0];
     },
@@ -123,10 +133,10 @@ let website = {
     },
     getAccountInfo: async function(username)
     {
-        let sql = `CALL get_account_info(?)`;
+        let sql = `CALL get_account_info(?);`;
         let result = await db.query(sql, [username]);
 
-        return result[0];
+        return result;
     },
     showPickupReady: async function(id)
     {
@@ -158,6 +168,111 @@ let website = {
         let sql = `CALL equipment_reserve(?,?,?);`;
 
         await db.query(sql, [a_id, e_id, date]);
+    },
+    showEquipmentHistory: async function()
+    {
+        let sql = `CALL show_logs();`;
+        let result = await db.query(sql);
+
+        return result;
+    },
+    showLogsSearch: async function(search)
+    {
+        let sql = `CALL show_logs_search(?);`;
+        let result = await db.query(sql, [search]);
+
+        return result;    
+    },
+    showAccounts: async function()
+    {
+        let sql = `CALL show_accounts();`;
+        let result = await db.query(sql);
+
+        return result;    
+    },
+    deleteStudent: async function(id)
+    {
+        let sql = `CALL delete_student(?);`;
+        await db.query(sql, [id]);   
+    },
+    showAccountsSearch: async function(search)
+    {
+        let sql = `CALL show_accounts_search(?);`;
+        let result = await db.query(sql, [search]);
+
+        return result;  
+    },
+    reserveAvailable: async function(id, date1, date2)
+    {
+        let sql = `CALL show_booked_dates(?);`;
+        let result = await db.query(sql, [id]);
+
+        let match = 0;
+
+        for (let loopDate = date1;loopDate < date2;loopDate.setDate(loopDate.getDate() + 1))
+        {
+            for (let i = 0;i < result[0].length;i++)
+            {
+               if (loopDate.toLocaleDateString('fr-CA') == result[0][i])
+               {
+                match++;
+               }
+            }
+
+            for (let i = 0;i < result[1].length;i++)
+            {
+               if (loopDate.toLocaleDateString('fr-CA') == result[1][i])
+               {
+                match++;
+               }
+            }
+        }
+
+        if (match > 0)
+        {
+            return false;
+        } 
+        return true;
+    },
+    emailValid: async function(email)
+    {
+        let splitEmail = email.split("@");
+        if (splitEmail.length == 2)
+        {
+            if (splitEmail[0].length == 6 && splitEmail[1] == "student.bth.se")
+            {
+                return true;
+            }
+        }
+        return false;
+    },
+    superUserLogin: async function(username, password)
+    {
+        let sql = `CALL super_user_login_check(?, ?);`;
+
+        let result = await db.query(sql, [username, password]);
+
+        return result[0];
+    },
+    superUserChangePassword: async function(password)
+    {
+        let sql = `CALL super_user_change_password(?);`;
+
+        await db.query(sql, [password]);
+    },
+    superUserChangeUsername: async function(username)
+    {
+        let sql = `CALL super_user_change_username(?);`;
+
+        await db.query(sql, [username]);
+    },
+    show_booking: async function(e_id, p_id)
+    {
+        let sql = `CALL show_booking(?, ?);`;
+
+        let result = await db.query(sql, [e_id, p_id]);
+
+        return result;
     }
 };
 

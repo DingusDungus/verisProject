@@ -1,0 +1,61 @@
+<%- include("admin-header", {title: title, name: name}); %>
+
+
+<h1>Equipment history</h1><br>
+<form class="form-inline" method="post" action="/admin-history-search">
+  <div class="form-group mx-sm-3 mb-2">
+    <input type="text" name="search" class="form-control" placeholder="Search">
+  </div>
+  <button type="submit" class="btn btn-primary mb-2">Search</button>
+  <button href="/admin-features/manage-accounts" class="btn btn-primary mb-2">Reset</button>
+</form>
+<div style="overflow-x:auto;">
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+        <th scope="col">Log ID</th>
+        <th scope="col">Student ID</th>
+        <th scope="col">Student username</th>
+        <th scope="col">Item ID</th>
+        <th scope="col">Item name</th>
+        <th scope="col">Description</th>
+    </tr>
+  </thead>
+    <% for(var i = 0; i < results[0].length; i++) { %>
+        <tr>
+      <td scope="row"><%= results[0][i].id %></td>
+      <td><%= results[0][i].student_id %></td>
+      <td><%= results[0][i].username %></td>
+      <td><%= results[0][i].e_id %></td>
+      <td><%= results[0][i].e_name %></td>
+      <td><%= results[0][i].descriptions %></td>
+    </tr>
+    <% } %>
+</table>
+</div>
+
+<div style="overflow-x:auto;">
+<table class="table">
+  <thead class="thead-dark">
+  <tr>
+      <th scope="col">Log ID</th>
+      <th scope="col">Admin ID</th>
+      <th scope="col">Admin username</th>
+      <th scope="col">Item ID</th>
+      <th scope="col">Item name</th>
+      <th scope="col">Description</th>
+  </tr>
+  </thead>
+  <% for(var i = 0; i < results[1].length; i++) { %>
+      <tr>
+    <td scope="row"><%= results[1][i].id %></td>
+    <td><%= results[1][i].admin_id %></td>
+    <td><%= results[1][i].username %></td>
+    <td><%= results[1][i].e_id %></td>
+    <td><%= results[1][i].e_name %></td>
+    <td><%= results[1][i].descriptions %></td>
+  </tr>
+  <% } %>
+</table>
+</div>
+<%- include("footer"); %>

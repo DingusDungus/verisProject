@@ -1,205 +1,44 @@
-body {
-    background-image: url("background-image.jpg");
-}
-
-.container {
-    margin: 15px auto;
-    padding: 8px;
-    background: #fff;
-    width: 700px;
-    border-radius: 15px;
-}
-
-.container1 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 7%;
-}
-
-.divScroll {
-    overflow:scroll;
-    height:300px;
-    width: 700px;
-}
-
-#header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20%;
-    margin-left: 35%;
-    font-family: monospace;
-    font-size: 100px;
-    background-color: #4CAF50;
-    border: 1px solid black;
-    color: white;
-    width: 30%;
-}   
-
-fieldset {
-    font-size: 1em;
-    padding: 0.5em;
-    border-radius: 1em;
-    font-family: sans-serif;
-}
-
-label, input, button {
-    font-size: inherit;
-    padding: 0.2em;
-    margin: 0.1em 0.2em;
-    /* the following ensures they're all using the same box-model for rendering */
-    -moz-box-sizing: content-box; /* or `border-box` */
-    -webkit-box-sizing: content-box;
-    box-sizing: content-box;
-}
-
-table {
-    border: 1px solid #ccc;
-}
-
-th {
-    border-bottom: 1px solid #999;
-}
-
-td {
-    padding: 0.2em;
-}
-
-td.right {
-    text-align: right;
-}
-
-tr:hover {
-    background-color: #eee;
-}
-
-form.label-left {
-    margin-bottom: 24px;
-}
-
-form.label-left label,
-form.label-left input[type=text],
-form.label-left input[type=password],
-form.label-left input[type=number] {
-    height: 20px;
-    margin-bottom: 4px;
-}
-
-form.label-left label {
-    display: inline-block;
-    width: 5em;
-    float: left;
-    padding-top: 6px;
-    padding-right: 1em;
-
-    /* text-align: right; */
-}
-
-form.label-left label::after {
-    content: ":";
-}
-
-form.label-left input[type=text],
-form.label-left input[type=password],
-form.label-left input[type=number] {
-    display: block;
-    width: 20em;
-    height: 25px;
-}
-
-input[type=text] {
-    border: 2px solid black;
-    border-radius: 4px;
-    background-color: #d1d1d1e1;
-    background-image: url('searchicon.png');
-}
-
-input[type=password] {
-    border: 2px solid black;
-    border-radius: 4px;
-    background-color: #d1d1d1e1;
-}
-
-input[type=email] {
-    border: 2px solid black;
-    border-radius: 4px;
-    background-color: #d1d1d1e1;
-    background-image: url('searchicon.png');
-}
-
-#button1 {
-    background-color: grey;
-    border: none;
-    color: white;
-    padding: 7px 8px;
-    text-decoration: none;
-    margin: 2px 3px;
-    cursor: pointer;
-    transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    border: 1px solid black;
-    font-family: monaco;
-    width:50px;
-    height:20px;
-    text-align:center;
-    line-height:1.1em;
-    font-size:1.1em;
-}
-
-#button1:hover {
-  background-color: #43acdd; /* Green */
-  color: white;
-}
-
-#navBar {
-    background-color: grey;
-    border: none;
-    color: white;
-    padding: 7px 8px;
-    text-decoration: none;
-    cursor: pointer;
-    transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    border: 1px solid black;
-    font-family: monospace;
-    text-align: center;
-    width: 50%;
-    height: 50px;
-    display: inline;
-}
-
-#navBar:hover {
-    background-color: #43acdd; /* Green */
-    color: white;
+html, body {
+    height: 100%;
+    margin: 0;
+	font-family: Rubik,Arial,sans-serif;
+	font-weight: 400;
+	font-size: 1rem;
+	overflow-x: hidden;
+	color: #607289;
   }
-
-#indexButtons {
-    width: 180px;
-    height: 100px;
-    background-color: white;
-    border: none;
-    color: black;
-    padding: 7px 8px;
-    text-decoration: none;
-    margin: 2px 3px;
-    cursor: pointer;
-    transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    border: 1px solid black;
-    text-align: center;
-    font-family: monospace;
-    vertical-align: middle;
-    font-size: 20px;
-    border-radius: 15px;
-    margin-top: 5%;
+.wrapper {
+    min-height: 95%;
+  
+    /* Equal to height of footer */
+    /* But also accounting for potential margin-bottom of last child */
+    margin-bottom: -270px;
 }
-#indexButtons:hover {
-    background-color: #43acdd; /* Green */
-    color: white;
+.footer,
+.push {
+    height: 270px;
 }
 
-#indexImage {
-    margin-left: 40%;
-    margin-top: 15%;
+h5 {
+    font-size: 1rem;
+    line-height: 1.375;
+  font-family: Rubik,Arial,sans-serif;
+    font-weight: 500;
+    color: #030929;
+}
+
+a {
+  color: #818494;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+a:hover {
+  color: #007bff;
+  text-decoration: none;
+}
+
+footer {
+  background: #ebf4fa;
 }

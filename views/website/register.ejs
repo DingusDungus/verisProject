@@ -1,23 +1,38 @@
 <%- include("indexHeader", {title: title}); %>
-<form class="label-left" method="post" action="/index/register">
-    <fieldset>
-        <legend>Register to website</legend>
 
-        <label for="username">Username</label>
-        <input id="username" type="text" name="username">
-
-        <label for="passwordUser">Password</label>
-        <input id="passwordUser" type="password" name="passwordUser">
-
-        <label for="email">Email</label>
-        <input id="email" type="text" name="email">
-
-        <input type="submit" name="doit" value="Register" id="button1">
-        <br>
-        <br>
-        <% if (failed == true) { %>
-            <p style= "color: red;">Username already exists!</p>
-        <% } %>
-    </fieldset>
+<form method="post" action="/index/register" style="margin: auto; width: 450px;">
+    <br>
+    <legend>Register</legend>
+    <div class="form-row">
+            <input type="text" class="form-control"  placeholder="Username" name="username" required>
+    </div>
+    <% if (failed == true) { %>
+        <p style= "color: red;">Username already exists!</p>
+    <% } %>
+    <br>
+    <div class="form-row">
+        <div class="input-group">
+              <input type="password" class="form-control" placeholder="Password" name="passwordUser" required>
+        </div>
+    </div>
+    <br>
+    <div class="form-row">
+        <div class="input-group">
+              <input type="email" class="form-control" placeholder="Email" name="email" required>
+        </div>
+        <span class = "help-block">
+            Email must consist of acronym and BTH email domain (ex. gaiv20@student.bth.se)
+         </span>
+    </div>
+    <% if (emailValid == false) { %>
+        <p style= "color: red;">Email is invalid!</p>
+    <% } %>
+    <br>
+        <div class="form-row">
+            <div class="input-group">
+                <input type="submit" name="doit" value="Login" class="btn btn-primary">
+            </div>
+        </div>
 </form>
+
 <%- include("footer"); %>

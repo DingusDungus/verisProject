@@ -1,13 +1,27 @@
 <!doctype html>
-<meta charset="utf-8">
 <title><%= title %></title>
-<link rel="stylesheet" href="/style/style.css">
-<link rel="icon" href="/favicon.ico">
-<div>
-    <img src="https://cdn.discordapp.com/attachments/779450920932081665/887980584650018816/Logo.png" alt="Veris" width="500" height="190" id="indexImage">
-    <br>
-    <main class="container1">
-    <a href="/login/students" id="indexButtons"><h1>Student</h1></a>
-    <br> 
-    <a href="/login/admins" id="indexButtons"><h1>Admin</h1></a> </div>
-</main>
+
+<header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="studentNav.css">
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/index.css">
+</header>
+<body>
+        <nav class= "navbar navbar-dark bg-dark nav-link navbar-expand-sm">
+            <a href ="/index" class="navbar-brand" style="color: #43acdd"><img src="https://cdn.discordapp.com/attachments/779450920932081665/887980584650018816/Logo.png" alt="Veris" width="150" height="50"></a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="navbar-brand nav-text">Welcome</a>
+                </li>
+            </ul>
+        </nav>
+    <div class="wrapper">
+        <a href="/login/admins" class="btn btn-primary" id="startButton1">Admin</a>
+        <a href="/login/students" class="btn btn-primary" id="startButton2">Student</a>
+
+<%- include("footer"); %>

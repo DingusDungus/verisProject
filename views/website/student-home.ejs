@@ -1,50 +1,69 @@
 <%- include("studentHeader", {title: title}); %>
+<div style="margin-left: 1%;">
+<br>
+<h1>Home</h1>
+<br>
+<br>
+<br>
 <div style="overflow-x:auto;">
-    <table>
+    <table class="table">
         <legend><h3>Pick up</h3></legend>
+        <% if (result1.length > 0) { %>
+        <thead class="thead-dark">
         <tr>
-            <th>Booking Id</th>
-            <th>Equipment Id</th>
-            <th>Name</th>
-            <th>Booked</th>
-            <th>Pick up</th>
+            <th scope="col">Booking Id</th>
+            <th scope="col">Equipment Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Booked</th>
+            <th scope="col">Pick up</th>
         </tr>
+      </thead>
         <% for(var i = 0; i < result1.length; i++) { %>
             <tr>
-          <td><%= result1[i].es_id %></td>
+          <td scope="row"><%= result1[i].es_id %></td>
           <td><%= result1[i].id %></td>
           <td><%= result1[i].e_name %></td>
           <td><%= result1[i].booked.toLocaleDateString() %></td>
           <td>
-            <a href="/student-features/pick-up/<%= result1[i].es_id %>">&#x270e;</a>
+            <a href="/student-features/pick-up/<%= result1[i].es_id %>">Pick up</a>
           </td>
         </tr>
+        <% } %>
+        <% } else { %>
+          <p>There's nothing to pick up right now</p>
         <% } %>
     </table>
     </div>
     <div style="overflow-x:auto;">
-      <table>
+      <table class="table">
           <legend><h3>Return</h3></legend>
+          <% if (result2[0].length > 0) { %>
+          <thead class="thead-dark">
           <tr>
-              <th>Booking Id</th>
-              <th>Equipment Id</th>
-              <th>Name</th>
-              <th>Booked</th>
-              <th>Overdue</th>
-              <th>Return</th>
+              <th scope="col">Booking Id</th>
+              <th scope="col">Equipment Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Booked</th>
+              <th scope="col">Overdue</th>
+              <th scope="col">Return</th>
           </tr>
+        </thead>
           <% for(var i = 0; i < result2[0].length; i++) { %>
               <tr>
-            <td><%= result2[0][i].es_id %></td>
+            <td scope="row"><%= result2[0][i].es_id %></td>
             <td><%= result2[0][i].id %></td>
             <td><%= result2[0][i].e_name %></td>
             <td><%= result2[0][i].booked.toLocaleDateString() %></td>
             <td><%= result2[1][i].overdue %></td>
             <td>
-              <a href="/student-features/return/<%= result2[0][i].es_id %>/<%= result2[0][i].id %>">&#x270e;</a>
+              <a href="/student-features/return/<%= result2[0][i].es_id %>/<%= result2[0][i].id %>">Return</a>
             </td>
           </tr>
           <% } %>
+          <% } else { %>
+            <p>There's nothing ready for return right now</p>
+          <% } %>
       </table>
       </div>
+    </div>
 <%- include("footer"); %>
