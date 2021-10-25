@@ -17,14 +17,14 @@ DROP TABLE IF EXISTS equipment;
 DROP TABLE IF EXISTS super_user;
 
 CREATE TABLE super_user (
-    username VARCHAR(30) DEFAULT "superUser",
-    passwordUser VARCHAR(64) DEFAULT SHA2("password", "256")
+    id INT DEFAULT 1,
+    passwordUser VARCHAR(64)
 ) ENGINE INNODB CHARSET utf8 COLLATE utf8_swedish_ci;
 
 INSERT INTO
-    super_user(username)
+    super_user(passwordUser)
 VALUES
-    ("superUser")
+    (SHA2("password", "256"))
     ;
 
 CREATE TABLE students (
@@ -239,16 +239,19 @@ DROP PROCEDURE IF EXISTS super_user_change_username;
 
 DROP PROCEDURE IF EXISTS show_booking;
 
+DROP PROCEDURE IF EXISTS isAdmin;
+
 DELIMITER ;;
 
-CREATE PROCEDURE super_user_change_username(
-    p_username VARCHAR(64)
+CREATE PROCEDURE isAdmin(
+    p_id INT,
+    p_username VARCHAR(20)
 ) BEGIN
 
-UPDATE super_user SET 
-        username = p_username
-    WHERE id = p_id
+    SELECT * FROM admins
+        WHERE id = p_id AND username = p_username
     ;
+
 END
 ;;
 
@@ -262,7 +265,7 @@ CREATE PROCEDURE super_user_change_password(
 
 UPDATE super_user SET 
         passwordUser = SHA2(p_password, "256")
-    WHERE id = p_id
+    WHERE id = 1
     ;
 END
 ;;
@@ -272,7 +275,6 @@ DELIMITER ;
 DELIMITER ;;
 
 CREATE PROCEDURE super_user_login_check(
-    p_username VARCHAR(30),
     p_passwordUser VARCHAR(30)
 ) BEGIN
 SELECT
@@ -280,8 +282,8 @@ SELECT
 FROM
     super_user
 WHERE
-    username = p_username
-    AND passwordUser = SHA2(p_passwordUser, "256");
+    passwordUser = SHA2(p_passwordUser, "256")
+    ;
 
 END
 ;;
@@ -494,7 +496,7 @@ SELECT
 FROM
     equipment
 WHERE
-    (e_name LIKE CONCAT("%", search, "%") OR id LIKE CONCAT("%", search, "%") OR e_description LIKE CONCAT("%", search, "%")) AND deleted = 0
+    (e_name LIKE CONCAT("%", search, "%") OR id LIKE CONCAT("%", search, "%") OR e_description LIKE CONCAT("%", search, "%") OR e_status LIKE CONCAT("%", search, "%")) AND deleted = 0
     ;
 
 END

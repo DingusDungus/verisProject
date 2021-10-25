@@ -93,12 +93,23 @@ router.get("/admins/:username", async (req, res) => {
 });
 
 router.get("/admin-features/add", async (req, res) => {
-    let data = {
-        title: "Add equipment | Veris",
-        name: req.session.name
-    }
+    let isAdmin = await website.isAdmin(req.session.id, req.session.name);
 
-   res.render("website/equipment-add.ejs", data); 
+    if (isAdmin.length > 0) {
+        let data = {
+            title: "Add equipment | Veris",
+            name: req.session.name
+        }
+
+        res.render("website/equipment-add.ejs", data); 
+    } else {
+        let data = {
+            title: "Welcome | The Website"
+        };
+
+
+        res.render("website/index", data)
+    }
 });
 
 router.post("/admin-features/remove", urlencodedParser, async (req, res) => {
@@ -108,6 +119,9 @@ router.post("/admin-features/remove", urlencodedParser, async (req, res) => {
 });
 
 router.get("/admin-features/modify/:id", async (req, res) => {
+    let isAdmin = await website.isAdmin(req.session.id, req.session.name);
+
+    if (isAdmin.length > 0) {
     let data = {
         title: "Modify equipment | Veris",
         results: [],
@@ -117,6 +131,14 @@ router.get("/admin-features/modify/:id", async (req, res) => {
     data.results = data.results[0];
     
     res.render(`website/equipment-modify.ejs`, data);
+} else {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+
+    res.render("website/index", data)
+}
 });
 
 router.get("/student-features/book", async (req, res) => {
@@ -158,6 +180,9 @@ router.get("/student-features/book/:id", async (req, res) => {
 });
 
 router.get("/admin-features/reserve/:id", async (req, res) => {
+    let isAdmin = await website.isAdmin(req.session.id, req.session.name);
+
+    if (isAdmin.length > 0) {
     let data = {
         title: "Book | Veris",
         results: [],
@@ -182,10 +207,21 @@ router.get("/admin-features/reserve/:id", async (req, res) => {
     console.log(data.disabledDate);
 
 
-    res.render("website/equipment-reserve-followed.ejs", data)
+    res.render("website/equipment-reserve-followed.ejs", data);
+} else {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+
+    res.render("website/index", data)
+}
 });
 
 router.get("/admin-features/show-history", async (req, res) => {
+    let isAdmin = await website.isAdmin(req.session.id, req.session.name);
+
+    if (isAdmin.length > 0) {
     let data = {
         title: "Book | Veris",
         results: [],
@@ -195,6 +231,14 @@ router.get("/admin-features/show-history", async (req, res) => {
     data.results = await website.showEquipmentHistory();
 
     res.render("website/equipment-history.ejs", data);
+} else {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+
+    res.render("website/index", data)
+}
 });
 
 router.get("/student-features/pick-up/:es_id", async (req, res) => {
@@ -210,6 +254,9 @@ router.get("/student-features/return/:id/:e_id", async (req, res) => {
 });
 
 router.get("/admin-features/manage-accounts", async (req, res) => {
+    let isAdmin = await website.isAdmin(req.session.id, req.session.name);
+
+    if (isAdmin.length > 0) {
     let data = {
         title: "Book | Veris",
         results: [],
@@ -219,6 +266,14 @@ router.get("/admin-features/manage-accounts", async (req, res) => {
     data.results = await website.showAccounts();
 
     res.render("website/account-manage.ejs", data);
+} else {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+
+    res.render("website/index", data)
+}
 });
 
 router.get("/log-out", async (req, res) => {
@@ -229,6 +284,9 @@ router.get("/log-out", async (req, res) => {
 });
 
 router.get("/admin-features/track-status/:id", async (req, res) => {
+    let isAdmin = await website.isAdmin(req.session.id, req.session.name);
+
+    if (isAdmin.length > 0) {
     let data = {
         title: "Status | Veris",
         results: [],
@@ -239,6 +297,14 @@ router.get("/admin-features/track-status/:id", async (req, res) => {
     console.log(data.results);
 
     res.render("website/track-status.ejs", data);
+} else {
+    let data = {
+        title: "Welcome | The Website"
+    };
+
+
+    res.render("website/index", data)
+}
 });
 
 router.post("/admin-features/delete-student", urlencodedParser, async (req, res) => {

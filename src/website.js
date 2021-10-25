@@ -246,11 +246,11 @@ let website = {
         }
         return false;
     },
-    superUserLogin: async function(username, password)
+    superUserLogin: async function(password)
     {
-        let sql = `CALL super_user_login_check(?, ?);`;
+        let sql = `CALL super_user_login_check(?);`;
 
-        let result = await db.query(sql, [username, password]);
+        let result = await db.query(sql, [password]);
 
         return result[0];
     },
@@ -260,12 +260,6 @@ let website = {
 
         await db.query(sql, [password]);
     },
-    superUserChangeUsername: async function(username)
-    {
-        let sql = `CALL super_user_change_username(?);`;
-
-        await db.query(sql, [username]);
-    },
     show_booking: async function(e_id, p_id)
     {
         let sql = `CALL show_booking(?, ?);`;
@@ -273,6 +267,14 @@ let website = {
         let result = await db.query(sql, [e_id, p_id]);
 
         return result;
+    },
+    isAdmin: async function(id, username)
+    {
+        let sql = `CALL isAdmin(?, ?);`;
+
+        let result = await db.query(sql, [id, username]);
+
+        return result[0];
     }
 };
 
