@@ -63,7 +63,7 @@
       <td><%= results[i].e_name %></td>
       <td><%= results[i].e_description %></td>
       <td><% if (results[i].e_status != "Free") { %>
-            <a href="/admin-features/track-status/<%= results[i].id %>">Status</a>
+            <a class="btn btn-primary" href="/admin-features/track-status/<%= results[i].id %>"><%= results[i].e_status %></a>
           <% } else { %>
             <%= results[i].e_status %>
           <% } %>

@@ -16,6 +16,7 @@
     "ejs": "^2.7.4",
     "express": "^4.17.1",
     "mysql": "^2.15.0",
+    "path": "^0.12.7",
     "promise-mysql": "^3.3.2",
     "readline-sync": "^1.4.10"
   },
