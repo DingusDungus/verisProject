@@ -2,6 +2,7 @@
 
 ## Dependencies
 - nodejs
+- Node modules in directory /node_modules
 
 
 ## How to use install
