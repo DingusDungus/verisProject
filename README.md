@@ -16,7 +16,7 @@ To start cli client you write `nodejs cli.js` into terminal
 
 ## Web app
 ### How to use
-To start web server you write `nodejs index.ejs` into terminal
+To start web server you write `nodejs index.js` into terminal
 
 To access it you go into browser and write `http://localhost:1337/index`
 
